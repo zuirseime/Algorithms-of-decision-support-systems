@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "clPvFS0/vsDqr3jKm1k84zMVEul+R4owJgHoMHk6FS7F8h6bAIO70gBil6gI/iumycsiiIA5SmvJpMf0PxO4zg==",
+  "success": true,
+  "projectFilePath": "D:\\Data\\Homework\\Універ\\2 course\\Semester 2\\АСППР\\Programs\\Lab1\\Lab1.WPF\\Lab1.WPF.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\vovak\\.nuget\\packages\\extended.wpf.toolkit\\4.6.0\\extended.wpf.toolkit.4.6.0.nupkg.sha512"
+  ],
+  "logs": []
+}

@@ -1,0 +1,117 @@
+﻿<Window x:Class="Lab1.WPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Lab1.WPF"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        mc:Ignorable="d"
+        Title="Lab 1" Height="450" Width="900"
+        ResizeMode="CanMinimize"
+        WindowStartupLocation="CenterScreen">
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.55*" />
+            <ColumnDefinition Width="0.45*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Column="0" Grid.Row="0" Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.7*" />
+                    <ColumnDefinition Width="0.3*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="Matrix A" Grid.Column="0" HorizontalAlignment="Center" Padding="5" />
+                <TextBlock Text="Matrix B" Grid.Column="1" HorizontalAlignment="Center" Padding="5" />
+
+                <TextBox x:Name="aText" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="1" FontFamily="Consolas" AcceptsReturn="True" TextChanged="OnEnterMatrix" />
+                <TextBox x:Name="bText" VerticalAlignment="Stretch" Grid.Column="1" Grid.Row="1" FontFamily="Consolas" AcceptsReturn="True" TextChanged="OnEnterMatrix" />
+            </Grid>
+
+            <Grid Grid.Column="1" Grid.Row="0" Margin="5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="Rows" Grid.Column="0" HorizontalAlignment="Center" Padding="5" />
+                    <TextBlock Text="Columns" Grid.Column="1" HorizontalAlignment="Center" Padding="5" />
+
+                    <xctk:IntegerUpDown x:Name="rowCount" Grid.Column="0" Grid.Row="1" Value="3" Minimum="1" Maximum="7" />
+                    <xctk:IntegerUpDown x:Name="colCount" Grid.Column="1" Grid.Row="1" Value="3" Minimum="1" Maximum="7" />
+                </Grid>
+
+                <StackPanel Grid.Row="1" Margin="5" VerticalAlignment="Center">
+                    <Button Click="GenerateMatrices" Content="Generate" Padding="5" />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <CheckBox x:Name="generateA" Content="Matrix A" Margin="10 5" IsChecked="True" />
+                        <CheckBox x:Name="generateB" Content="Matrix B" Margin="10 5" IsChecked="True" />
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Grid.Row="3" Margin="5" VerticalAlignment="Center">
+                    <Button Click="CalculateMatrixRank" Content="Calculate matrix rank" Padding="5" />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock Text="Matrix rank" Margin="10 5" />
+                        <TextBox x:Name="rank" IsReadOnly="True" Width="100" Margin="10 5" />
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+
+            <Grid Grid.Column="0" Grid.Row="1" Margin="5 15 5 5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Button Click="CalculateLinearSystem" Content="Calculate linear system" Padding="5" />
+                <TextBox x:Name="resultMatrix" Grid.Row="1" VerticalAlignment="Stretch" IsReadOnly="True" FontFamily="Consolas" AcceptsReturn="True" />
+            </Grid>
+
+            <Grid Grid.Column="1" Grid.Row="1" Margin="5 15 5 5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Button Click="CalculateInverseMatrix" Content="Calculate inverse matrix" Padding="5" />
+                <TextBox x:Name="inverseMatrix" Grid.Row="1" VerticalAlignment="Stretch" IsReadOnly="True" FontFamily="Consolas" AcceptsReturn="True" />
+            </Grid>
+        </Grid>
+
+        <Grid Grid.Column="1" Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Text="The computation protocol" HorizontalAlignment="Center" Padding="5" />
+            <TextBox x:Name="protocol" Grid.Row="1" VerticalAlignment="Stretch" AcceptsReturn="True" FontFamily="Consolas" IsReadOnly="True" TextWrapping="Wrap" />
+        </Grid>
+    </Grid>
+</Window>
