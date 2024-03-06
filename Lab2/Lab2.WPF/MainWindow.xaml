@@ -5,8 +5,108 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Lab2.WPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="288" Width="500"
+        WindowStartupLocation="CenterScreen" Closing="OnClosing" ResizeMode="CanMinimize"
+        FontFamily="Consolas">
     <Grid>
-        <Button Click="GenerateProtocol" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Click" Padding="20 5" />
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <Border BorderThickness="1" BorderBrush="LightGray" Margin="5">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Grid Margin="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="Z = " />
+                    <TextBox x:Name="func" Grid.Column="1" />
+                </Grid>
+
+                <Grid Grid.Row="1" Margin="5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="Constraints:" />
+                    <TextBox x:Name="constraints" Grid.Row="1" AcceptsReturn="True" />
+                </Grid>
+            </Grid>
+        </Border>
+
+        <Border Grid.Column="1" BorderThickness="1" BorderBrush="LightGray" Margin="5">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Border BorderThickness="1" BorderBrush="LightGray" Margin="5" Padding="5">
+                    <StackPanel>
+                        <TextBlock Text="Mode" Margin="5 0"/>
+                        <StackPanel Orientation="Horizontal">
+                            <RadioButton Content="Min" x:Name="min" GroupName="mode" IsChecked="False" Margin="5 5 5 0"/>
+                            <RadioButton Content="Max" x:Name="max" GroupName="mode" IsChecked="True" Margin="5 5 5 0"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <Button Content="Find Optimal Solution" Grid.Row="1" Margin="5" Padding="5" Click="Calculate"/>
+
+                <Border Grid.Row="2" BorderThickness="1" BorderBrush="LightGray" Margin="5" Padding="5">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <CheckBox x:Name="log" Content="Create calculation log" Checked="OnLogActivationChanged" Unchecked="OnLogActivationChanged" IsChecked="False" />
+                        <Border Grid.Row="1" BorderThickness="1" BorderBrush="LightGray" Margin="0 5 0 0">
+                            <StackPanel Orientation="Horizontal" Margin="0 5">
+                                <CheckBox x:Name="screenLog" Content="On screen" Margin="5 0" IsEnabled="False" IsChecked="False" />
+                                <CheckBox x:Name="fileLog" Content="In file" Margin="5 0" IsEnabled="False" IsChecked="False" />
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <Border Grid.Row="3" BorderThickness="1.5" BorderBrush="LightGray" Margin="5" />
+
+                <Border Grid.Row="4" BorderThickness="1" BorderBrush="LightGray" Margin="5">
+                    <StackPanel>
+                        <Grid Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Text="X = " />
+                            <TextBox x:Name="roots" Grid.Column="1" IsReadOnly="True" />
+                        </Grid>
+                        <Grid Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Text="Z = " />
+                            <TextBox x:Name="solution" Grid.Column="1" IsReadOnly="True" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
     </Grid>
 </Window>

@@ -36,15 +36,15 @@ public class Inequality(double[] coefficients, double constant) {
                 leftLessThanRight = match.Groups["rel"].Value == "<=" || match.Groups["rel"].Value == "<";
             }
             if (match.Groups["const"].Success) {
-                constant = double.Parse(match.Groups["const"].Value);
+                constant = -double.Parse(match.Groups["const"].Value);
             }
         }
 
         if (leftLessThanRight) {
             for (int i = 0; i < coefficients.Count; i++) {
-                coefficients[i] *= -1;
+                if (coefficients[i] != 0) coefficients[i] *= -1;
             }
-            constant *= -1;
+            if (constant != 0) constant *= -1;
         }
 
         return new Inequality([..coefficients], constant);

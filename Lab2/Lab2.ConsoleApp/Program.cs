@@ -9,12 +9,12 @@ internal class Program {
             x1+x2+x3-x4>=5
             2x1-x2+3x3+4x4<=10
             """;
-        string funcStr = "x1+2x2-x3-x4"; // max
+        string funcStr = "x1+2x2-x3-x4";
 
         string[] constaintsArray = constaintsStr.Split('\n');
         List<Inequality> constaintsList = [];
         Array.ForEach(constaintsArray, relation => constaintsList.Add(Inequality.Parse(relation)));
-        Inequality[] constraints = constaintsList.ToArray();
+        Inequality[] constraints = [.. constaintsList];
 
         Function func = Function.Parse(funcStr);
 
@@ -34,12 +34,10 @@ internal class Program {
         }
         table[rows, cols - 1] = 0;
 
-        _ = SimplexAlgrorithm.FindRoots(table, constaintsStr, funcStr, true);
-        string[] log = SimplexAlgrorithm.Log.ToArray();
+        SimplexAlgrorithm simplex = new();
+        simplex.Run(table, constaintsStr, funcStr, true);
 
-        Array.ForEach(log, Console.WriteLine);
-
-        Log.Write(log);
-        Log.Show();
+        Log.Instance.Save();
+        Log.Instance.Show();
     }
 }
