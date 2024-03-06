@@ -5,18 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Lab2.WPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="288" Width="500"
+        Title="Simplex Algorithm" Height="235" Width="500"
         WindowStartupLocation="CenterScreen" Closing="OnClosing" ResizeMode="CanMinimize"
         FontFamily="Consolas">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
         <Border BorderThickness="1" BorderBrush="LightGray" Margin="5">
             <Grid>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
@@ -31,7 +32,17 @@
                     <TextBox x:Name="func" Grid.Column="1" />
                 </Grid>
 
-                <Grid Grid.Row="1" Margin="5">
+                <Border Grid.Row="1" BorderThickness="1" BorderBrush="LightGray" Margin="5" Padding="5">
+                    <StackPanel>
+                        <TextBlock Text="Mode" Margin="5 0"/>
+                        <StackPanel Orientation="Horizontal">
+                            <RadioButton Content="Minimize" x:Name="min" GroupName="mode" IsChecked="False" Margin="5 5 5 0"/>
+                            <RadioButton Content="Maximize" x:Name="max" GroupName="mode" IsChecked="True" Margin="5 5 5 0"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <Grid Grid.Row="2" Margin="5">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
@@ -46,26 +57,15 @@
         <Border Grid.Column="1" BorderThickness="1" BorderBrush="LightGray" Margin="5">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <Border BorderThickness="1" BorderBrush="LightGray" Margin="5" Padding="5">
-                    <StackPanel>
-                        <TextBlock Text="Mode" Margin="5 0"/>
-                        <StackPanel Orientation="Horizontal">
-                            <RadioButton Content="Min" x:Name="min" GroupName="mode" IsChecked="False" Margin="5 5 5 0"/>
-                            <RadioButton Content="Max" x:Name="max" GroupName="mode" IsChecked="True" Margin="5 5 5 0"/>
-                        </StackPanel>
-                    </StackPanel>
-                </Border>
+                <Button Content="Find Optimal Solution" Grid.Row="0" Margin="5" Padding="5" Click="Calculate"/>
 
-                <Button Content="Find Optimal Solution" Grid.Row="1" Margin="5" Padding="5" Click="Calculate"/>
-
-                <Border Grid.Row="2" BorderThickness="1" BorderBrush="LightGray" Margin="5" Padding="5">
+                <Border Grid.Row="1" BorderThickness="1" BorderBrush="LightGray" Margin="5" Padding="5">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition />
@@ -73,6 +73,7 @@
                         </Grid.RowDefinitions>
 
                         <CheckBox x:Name="log" Content="Create calculation log" Checked="OnLogActivationChanged" Unchecked="OnLogActivationChanged" IsChecked="False" />
+                        
                         <Border Grid.Row="1" BorderThickness="1" BorderBrush="LightGray" Margin="0 5 0 0">
                             <StackPanel Orientation="Horizontal" Margin="0 5">
                                 <CheckBox x:Name="screenLog" Content="On screen" Margin="5 0" IsEnabled="False" IsChecked="False" />
@@ -82,9 +83,9 @@
                     </Grid>
                 </Border>
 
-                <Border Grid.Row="3" BorderThickness="1.5" BorderBrush="LightGray" Margin="5" />
+                <Border Grid.Row="2" BorderThickness="1.5" BorderBrush="LightGray" Margin="5" />
 
-                <Border Grid.Row="4" BorderThickness="1" BorderBrush="LightGray" Margin="5">
+                <Border Grid.Row="3" BorderThickness="1" BorderBrush="LightGray" Margin="5">
                     <StackPanel>
                         <Grid Margin="5">
                             <Grid.ColumnDefinitions>

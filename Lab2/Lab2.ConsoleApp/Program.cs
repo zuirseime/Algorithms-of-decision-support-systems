@@ -1,4 +1,6 @@
-﻿using Lab2.Core;
+﻿using Lab2.Core.Input;
+using Lab2.Core.Mathematics;
+using Lab2.Core.Output;
 
 namespace Lab2.ConsoleApp;
 
@@ -22,13 +24,13 @@ internal class Program {
         int cols = 5;
 
         double[,] table = new double[rows + 1, cols];
-        
+
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
                 table[row, col] = col != cols - 1 ? constraints[row].Coefficients[col] : constraints[row].Constant;
             }
         }
-        
+
         for (int col = 0; col < cols - 1; col++) {
             table[rows, col] = func.Coefficients[col];
         }
