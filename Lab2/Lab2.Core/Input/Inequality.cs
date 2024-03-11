@@ -2,19 +2,18 @@ using System.Text.RegularExpressions;
 
 namespace Lab2.Core.Input;
 
-public class Inequality(double[] coefficients, double constant) {
+public sealed class Inequality(double[] coefficients, double constant) : Expression(coefficients, constant) {
     private const string RE =
         @"(?:(?<coef>[-]?\d*)(?:x(?<var>\d+)))|((?<rel><=|>=)(?<const>[-]?\d+))";
 
-    private double[] coefficients = coefficients;
-    private double constant = constant;
-
-    public double[] Coefficients => coefficients;
-    public double Constant => constant;
-
-    public static Inequality Parse(string equation) {
+    /// <summary>
+    /// Parses an inequality from the string
+    /// </summary>
+    /// <param name="function">The inequality string</param>
+    /// <returns>The <see cref="Inequality"/> object</returns>
+    public static Inequality Parse(string inequality) {
         Regex regex = new(RE);
-        MatchCollection matches = regex.Matches(equation);
+        MatchCollection matches = regex.Matches(inequality);
 
         double constant = 0;
         List<double> coefficients = [];
