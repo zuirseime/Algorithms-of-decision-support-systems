@@ -1,0 +1,12 @@
+D:\Data\Homework\Універ\2 course\Semester 2\АСППР\Programs\Lab3\Lab3.Core\bin\Debug\net8.0-windows\Lab3.Core.deps.json
+D:\Data\Homework\Універ\2 course\Semester 2\АСППР\Programs\Lab3\Lab3.Core\bin\Debug\net8.0-windows\Lab3.Core.dll
+D:\Data\Homework\Універ\2 course\Semester 2\АСППР\Programs\Lab3\Lab3.Core\bin\Debug\net8.0-windows\Lab3.Core.pdb
+D:\Data\Homework\Універ\2 course\Semester 2\АСППР\Programs\Lab3\Lab3.Core\obj\Debug\net8.0-windows\Lab3.Core.GeneratedMSBuildEditorConfig.editorconfig
+D:\Data\Homework\Універ\2 course\Semester 2\АСППР\Programs\Lab3\Lab3.Core\obj\Debug\net8.0-windows\Lab3.Core.AssemblyInfoInputs.cache
+D:\Data\Homework\Універ\2 course\Semester 2\АСППР\Programs\Lab3\Lab3.Core\obj\Debug\net8.0-windows\Lab3.Core.AssemblyInfo.cs
+D:\Data\Homework\Універ\2 course\Semester 2\АСППР\Programs\Lab3\Lab3.Core\obj\Debug\net8.0-windows\Lab3.Core.csproj.CoreCompileInputs.cache
+D:\Data\Homework\Універ\2 course\Semester 2\АСППР\Programs\Lab3\Lab3.Core\obj\Debug\net8.0-windows\Lab3.Core.sourcelink.json
+D:\Data\Homework\Універ\2 course\Semester 2\АСППР\Programs\Lab3\Lab3.Core\obj\Debug\net8.0-windows\Lab3.Core.dll
+D:\Data\Homework\Універ\2 course\Semester 2\АСППР\Programs\Lab3\Lab3.Core\obj\Debug\net8.0-windows\refint\Lab3.Core.dll
+D:\Data\Homework\Універ\2 course\Semester 2\АСППР\Programs\Lab3\Lab3.Core\obj\Debug\net8.0-windows\Lab3.Core.pdb
+D:\Data\Homework\Універ\2 course\Semester 2\АСППР\Programs\Lab3\Lab3.Core\obj\Debug\net8.0-windows\ref\Lab3.Core.dll

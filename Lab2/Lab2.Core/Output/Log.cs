@@ -45,7 +45,7 @@ public sealed class Log {
             process.StartInfo.UseShellExecute = false;
             process.Start();
 
-            process.WaitForExit();
+            //process.WaitForExit();
         } catch (Exception ex) {
             Debug.WriteLine($"Couldn't open \"{LogFile}\": {ex.Message}\n{ex.StackTrace}");
         }

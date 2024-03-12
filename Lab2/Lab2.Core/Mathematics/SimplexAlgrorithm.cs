@@ -160,7 +160,7 @@ public sealed class SimplexAlgrorithm {
     private double[,]? FindMinOptimalSolution(double[,]? table) {
         if (table is null) return null;
 
-        log.WriteLine("Going to the problem of maximizing the objective function Z':");
+        log.WriteLine("\nGoing to the problem of maximizing the objective function Z':");
         string func = string.Empty;
         for (int col = 0; col < table.GetLength(1) - 1; col++) {
             table[table.GetLength(0) - 1, col] *= -1;
