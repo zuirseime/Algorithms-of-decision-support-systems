@@ -5,12 +5,12 @@ namespace Lab3.Core.Output;
 
 /// <summary>A class of the log</summary>
 public sealed class Log {
-    private string LogFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "log.txt");
+    private readonly string LogFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "log.txt");
 
     private static Log instance = null!;
     public static Log Instance => instance ??= new Log();
 
-    private List<string> _data = null!;
+    private readonly LinkedList<string> _data = null!;
     private Log() => _data = [];
 
     /// <summary>
@@ -18,7 +18,7 @@ public sealed class Log {
     /// </summary>
     /// <param name="line">The line to be written</param>
     public void WriteLine(string line) {
-        _data.Add(line);
+        _data.AddLast(line);
         Console.WriteLine(line);
     }
 
@@ -30,7 +30,7 @@ public sealed class Log {
             File.Create(LogFile);
 
         using StreamWriter writer = new(LogFile);
-        writer.WriteLine(string.Join("\n", _data));
+        writer.WriteLine(this);
         writer.Close();
     }
 
@@ -42,10 +42,7 @@ public sealed class Log {
             Process process = new();
             process.StartInfo.FileName = "notepad";
             process.StartInfo.Arguments = LogFile;
-            process.StartInfo.UseShellExecute = false;
             process.Start();
-
-            //process.WaitForExit();
         } catch (Exception ex) {
             Debug.WriteLine($"Couldn't open \"{LogFile}\": {ex.Message}\n{ex.StackTrace}");
         }
@@ -65,10 +62,5 @@ public sealed class Log {
     /// Converts the log into the line
     /// </summary>
     /// <returns>The log in the string format</returns>
-    public override string ToString() {
-        string result = string.Empty;
-        _data.ForEach(line => result += $"{line}\n");
-
-        return result;
-    }
+    public override string ToString() => string.Join('\n', _data);
 }
