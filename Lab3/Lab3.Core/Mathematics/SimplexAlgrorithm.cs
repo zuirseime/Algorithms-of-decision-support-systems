@@ -66,29 +66,27 @@ public sealed class SimplexAlgrorithm {
     /// <param name="table">The simplex table to be modified</param>
     /// <param name="row">The pivot row</param>
     /// <param name="col">The pivot column</param>
-    private void ModifiedJordanExclusions(ref double[,] table, int row, int col) {
-        double[,] modTable = (double[,])table.Clone();
+    private void ModifiedJordanExclusions(double[,] table, int row, int col) {
+        double[,] temp = (double[,])table.Clone();
 
-        modTable[row, col] = 1;
+        table[row, col] = 1;
         for (int i = 0; i < table.GetLength(0); i++) {
             if (i != row)
-                modTable[i, col] *= -1;
+                table[i, col] *= -1;
 
             for (int j = 0; j < table.GetLength(1); j++) {
                 if (i != row && j != col)
-                    modTable[i, j] = table[i, j] * table[row, col]
-                                   - table[i, col] * table[row, j];
+                    table[i, j] = temp[i, j] * temp[row, col]
+                                - temp[i, col] * temp[row, j];
 
-                modTable[i, j] /= table[row, col];
+                table[i, j] /= temp[row, col];
             }
         }
 
         if (row != table.GetLength(0) - 1 && col != table.GetLength(1) - 1)
             (_xs[col], _ys[row]) = (_ys[row], _xs[col]);
         FixHeaderSigns();
-        LogTable(modTable);
-
-        table = (double[,])modTable.Clone();
+        LogTable(table);
     }
 
     /// <summary>Finds a basic feasible solution</summary>
@@ -97,7 +95,7 @@ public sealed class SimplexAlgrorithm {
     private double[,]? FindBasicFeasibleSolution(double[,]? table) {
         if (table is null) return null;
 
-        InvertItemSigns(ref table);
+        InvertItemSigns(table);
         LogTable(table);
         log.WriteLine("Finding a basic feasible solution:\n");
 
@@ -123,7 +121,7 @@ public sealed class SimplexAlgrorithm {
                 return null;
             }
 
-            LogSolvingElement(ref table, pivotRow, pivotCol);
+            LogSolvingElement(table, pivotRow, pivotCol);
         }
     }
 
@@ -150,7 +148,7 @@ public sealed class SimplexAlgrorithm {
                 return null;
             }
 
-            LogSolvingElement(ref table, pivotRow, pivotCol);
+            LogSolvingElement(table, pivotRow, pivotCol);
         }
     }
 
@@ -196,7 +194,7 @@ public sealed class SimplexAlgrorithm {
             }
 
             int pivotRow = FindPivotRow(table, pivotCol);
-            LogSolvingElement(ref table, pivotRow, pivotCol);
+            LogSolvingElement(table, pivotRow, pivotCol);
 
             if (pivotRow == zeroRow)
                 table = CropTable(table, pivotCol);
@@ -292,7 +290,7 @@ public sealed class SimplexAlgrorithm {
 
     /// <summary>Inverts signs of all the items in the simplex table</summary>
     /// <param name="table">The simplex table</param>
-    private static void InvertItemSigns(ref double[,] table) {
+    private static void InvertItemSigns(double[,] table) {
         for (int row = 0; row < table.GetLength(0); row++)
             for (int col = 0; col < table.GetLength(1) - 1; col++)
                 table[row, col] *= -1;
@@ -370,9 +368,9 @@ public sealed class SimplexAlgrorithm {
     /// <param name="table">The simplex table</param>
     /// <param name="row">The solving element row index</param>
     /// <param name="col">The solving elemnt column index</param>
-    private void LogSolvingElement(ref double[,] table, int row, int col) {
+    private void LogSolvingElement(double[,] table, int row, int col) {
         log.WriteLine($"The solving row: {_ys[row]}\nThe solving column: {_xs[col]}");
-        ModifiedJordanExclusions(ref table, row, col);
+        ModifiedJordanExclusions(table, row, col);
     }
     #endregion
 }
