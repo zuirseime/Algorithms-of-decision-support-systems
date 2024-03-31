@@ -6,9 +6,9 @@ public sealed class Function(double[] coefficients, double constant, string? str
     private const string RE =
         @"(?:(?<coef>[-]?\d*)(?:x(?<var>\d+)))|((?<!x)(?<const>[-]?\d+)(?!x))";
 
-    public static Function Parse(string function) {
+    public static Function Parse(string text) {
         Regex regex = new(RE);
-        MatchCollection matches = regex.Matches(function);
+        MatchCollection matches = regex.Matches(text);
 
         double constant = 0;
         List<double> coefficients = [];
@@ -30,6 +30,6 @@ public sealed class Function(double[] coefficients, double constant, string? str
             }
         }
 
-        return new Function([.. coefficients], constant);
+        return new Function([.. coefficients], constant, text);
     }
 }

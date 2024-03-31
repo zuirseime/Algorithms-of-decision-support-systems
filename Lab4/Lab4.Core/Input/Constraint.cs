@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using System.Windows.Media.Imaging;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Lab4.Core.Input;
 
@@ -7,9 +8,9 @@ public sealed class Constraint(double[] coefficients, double constant, string? s
     private const string RE =
         @"(?:(?<coef>[-]?\d*)(?:x(?<var>\d+)))|((?<rel><=|>=)(?<const>[-]?\d+))";
 
-    public static Constraint Parse(string inequality) {
+    public static Constraint Parse(string text) {
         Regex regex = new(RE);
-        MatchCollection matches = regex.Matches(inequality);
+        MatchCollection matches = regex.Matches(text);
 
         double constant = 0;
         List<double> coefficients = [];
@@ -42,6 +43,6 @@ public sealed class Constraint(double[] coefficients, double constant, string? s
             if (constant != 0) constant *= -1;
         }
 
-        return new Constraint([.. coefficients], constant);
+        return new Constraint([.. coefficients], constant, text);
     }
 }
