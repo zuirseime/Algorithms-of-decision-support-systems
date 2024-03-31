@@ -15,6 +15,7 @@ public sealed class Log {
     public void WriteLine(string line) {
         _data.Add(line);
         Console.WriteLine(line);
+        Debug.WriteLine(line);
     }
 
     public void Save() {

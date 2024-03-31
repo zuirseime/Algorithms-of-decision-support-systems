@@ -1,5 +1,6 @@
 ﻿using Lab4.Core.Input;
 using Lab4.Core.Output;
+using System.Diagnostics;
 
 namespace Lab4.Core.Mathematics;
 
@@ -18,6 +19,8 @@ public sealed class SimplexAlgrorithm {
 
     private int _order;
     private string[] _xs = null!, _ys = null!;
+    private double[] _roots = null!;
+    private int addictionalRows = 0;
     private SimplexAlgrorithmResult _result;
 
     public SimplexAlgrorithm() {
@@ -33,13 +36,79 @@ public sealed class SimplexAlgrorithm {
         log.WriteLine($"Problem definition:\nZ = {func} -> {(max ? "max" : "min")}\nwith constraints:\n{string.Join('\n', constraints as IEnumerable<Constraint>)}");
         if (max) log.WriteLine("\nInput simplex table:");
 
-        table = max ? FindMaxOptimalSolution(table) : FindMinOptimalSolution(table);
+        table = GomoriCutoff(table, max);
         if (table is null) return SimplexAlgrorithmResult.Default;
 
         _result.OptimalSolution = Math.Round(table![table.GetLength(0) - 1, table.GetLength(1) - 1], Round);
         log.WriteLine($"{(max ? "Max" : "Min")} (Z) = {_result.OptimalSolution}");
         return _result;
     }
+
+    private double[,]? GomoriCutoff(double[,]? table, bool max) {
+        if (table is null) return null;
+        InvertItemSigns(table);
+
+        while (true) {
+            // Basic Feasible Solution
+            table = FindBasicFeasibleSolution(table);
+
+            // Optimal Solution
+            table = max ? FindMaxOptimalSolution(table) : FindMinOptimalSolution(table);
+            if (table is null) return null;
+
+            // Integer Solution
+            if (_roots.All(r => Math.Round(r, Round) % 1 == 0))
+                return table;
+
+            int row = FindRootWithMaximumFractionalPart();
+            table = AddConstraint(table, row);
+        }
+    }
+
+    private int FindRootWithMaximumFractionalPart() {
+        double[] fractionalParts = new double[_roots.Length];
+        int index = 0;
+        double maxFractionalPart = 0;
+
+        for (int i = 0; i < _roots.Length; i++) {
+            double fractionalpart = GetFractionalPart(_roots[i]);
+            fractionalParts[i] = fractionalpart;
+            if (maxFractionalPart < fractionalpart) {
+                maxFractionalPart = fractionalpart;
+                index = i + 1;
+            }
+        }
+
+        return _ys.ToList().IndexOf($"x{index}");
+    }
+
+    private double[,] AddConstraint(double[,] table, int contributorRow) {
+        double[,] newTable = new double[table.GetLength(0) + 1, table.GetLength(1)];
+        string[] newYs = new string[_ys.Length + 1];
+
+        for (int row = 0; row < table.GetLength(0) - 1; row++) {
+            newYs[row] = _ys[row];
+            for (int col = 0; col < newTable.GetLength(1); col++) {
+                newTable[row, col] = table[row, col];
+            }
+        }
+
+        for (int col = 0; col < newTable.GetLength(1); col++) {
+            double coefficient = -GetFractionalPart(newTable[contributorRow, col]);
+            newTable[newTable.GetLength(0) - 2, col] = coefficient;
+        }
+        newYs[newTable.GetLength(0) - 2] = $"s{++addictionalRows}";
+
+        for (int col = 0; col < newTable.GetLength(1); col++) {
+            newTable[newTable.GetLength(0) - 1, col] = table[table.GetLength(0) - 1, col];
+            newYs[newTable.GetLength(0) - 1] = _ys[table.GetLength(0) - 1];
+        }
+
+        _ys = newYs;
+        return newTable;
+    }
+
+    private double GetFractionalPart(double value) => value - Math.Floor(value);
 
     private double[,] GenerateTable(Function func, Constraint[] constraints) {
         int rows = constraints.Length + 1;
@@ -92,7 +161,6 @@ public sealed class SimplexAlgrorithm {
     private double[,]? FindBasicFeasibleSolution(double[,]? table) {
         if (table is null) return null;
 
-        InvertItemSigns(table);
         LogTable(table);
         log.WriteLine("Finding a basic feasible solution:\n");
 
@@ -123,7 +191,6 @@ public sealed class SimplexAlgrorithm {
     }
 
     private double[,]? FindMaxOptimalSolution(double[,]? table) {
-        table = FindBasicFeasibleSolution(table);
         if (table is null) return null;
 
         log.WriteLine("\nFinding an optimal solution:\n");
@@ -263,18 +330,18 @@ public sealed class SimplexAlgrorithm {
 
     private string LogRoots(double[,] table) {
         int colCount = table.GetLength(1) - 1;
-        double[] roots = new double[_order];
+        _roots = new double[_order];
         string result = "X = ( ";
 
         for (int yi = 0; yi < _ys.Length; yi++)
             if (_ys[yi].Contains('x')) {
                 int index = _ys[yi].IndexOf('x');
                 _ = int.TryParse(_ys[yi][(index + 1)..], out int coefficient);
-                roots[coefficient - 1] = table[yi, colCount];
+                _roots[coefficient - 1] = table[yi, colCount];
             }
 
         for (int col = 0; col < _order; col++) {
-            result += $"{Math.Round(roots[col], Round)}{(col != _order - 1 ? "; " : " )")}";
+            result += $"{Math.Round(_roots[col], Round)}{(col != _order - 1 ? "; " : " )")}";
         }
 
         log.WriteLine(result);
