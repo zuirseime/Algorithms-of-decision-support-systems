@@ -2,18 +2,18 @@
 
 namespace Lab3.Core.Input;
 
-public sealed class Function(double[] coefficients, double constant) : Expression(coefficients, constant) {
+public sealed class Function(double[] coefficients, double constant, string str) : Expression(coefficients, constant, str) {
     private const string RE =
         @"(?:(?<coef>[-]?\d*)(?:x(?<var>\d+)))|((?<!x)(?<const>[-]?\d+)(?!x))";
 
     /// <summary>
     /// Parses an function from the string
     /// </summary>
-    /// <param name="function">The function string</param>
+    /// <param name="text">The function string</param>
     /// <returns>The <see cref="Function"/> object</returns>
-    public static Function Parse(string function) {
+    public static Function Parse(string text) {
         Regex regex = new(RE);
-        MatchCollection matches = regex.Matches(function);
+        MatchCollection matches = regex.Matches(text);
 
         double constant = 0;
         List<double> coefficients = [];
@@ -35,6 +35,6 @@ public sealed class Function(double[] coefficients, double constant) : Expressio
             }
         }
 
-        return new Function([.. coefficients], constant);
+        return new Function([.. coefficients], constant, text);
     }
 }

@@ -21,30 +21,15 @@ public partial class MainWindow : Window {
         if (!string.IsNullOrEmpty(constraints.Text) && !string.IsNullOrEmpty(func.Text)) {
             logWnd?.Close();
 
-            Inequality[] constraintsArray = constraints.Text.Trim().Split('\n').Select(relation => Inequality.Parse(relation.Trim())).ToArray();
-            double[,] table = GenerateTable(constraintsArray, Function.Parse(func.Text), constraintsArray.Length + 1, constraintsArray.Max(c => c.Coefficients.Length + 1));
+            Constraint[] constraintsArray = constraints.Text.Trim().Split('\n').Select(relation => Constraint.Parse(relation.Trim())).ToArray();
 
-            SimplexAlgrorithmResult result = GetSimplexResult(table);
+            SimplexAlgrorithmResult result = new SimplexAlgrorithm().Run(Function.Parse(func.Text), constraintsArray, max.IsChecked == true);
             roots.Text = result.OptimalSolutionRoots;
             solution.Text = result.OptimalSolution.ToString();
 
             ShowLog();
         }
     }
-
-    private static double[,] GenerateTable(Inequality[] constraintsArray, Function function, int rows, int cols) {
-        double[,] table = new double[rows, cols];
-
-        for (int row = 0; row < rows - 1; row++)
-            for (int col = 0; col < cols; col++)
-                table[row, col] = col != cols - 1 ? constraintsArray[row].Coefficients[col] : constraintsArray[row].Constant;
-
-        for (int col = 0; col < cols; col++)
-            table[rows - 1, col] = col != cols - 1 ? function.Coefficients[col] : 0;
-        return table;
-    }
-
-    private SimplexAlgrorithmResult GetSimplexResult(double[,] table) => new SimplexAlgrorithm().Run(table, constraints.Text, func.Text, max.IsChecked == true);
 
     private void ShowLog() {
         if (screenLog.IsChecked == true) {

@@ -1,4 +1,5 @@
-﻿using Lab3.Core.Output;
+﻿using Lab3.Core.Input;
+using Lab3.Core.Output;
 
 namespace Lab3.Core.Mathematics;
 
@@ -16,6 +17,7 @@ public sealed class SimplexAlgrorithm {
         }
     }
 
+    private int _order;
     private string[] _xs = null!, _ys = null!;
     private SimplexAlgrorithmResult _result;
 
@@ -26,20 +28,18 @@ public sealed class SimplexAlgrorithm {
 
     /// <summary>Runs calculating the value of the goal function</summary>
     /// <param name="inputTable">An input table of constraints + goal function</param>
-    /// <param name="inequalities">A string of constraints</param>
+    /// <param name="constraints">A string of constraints</param>
     /// <param name="zFunc">A string of goal fucntion</param>
     /// <param name="max"><see langword="true"/> if the goal value needs to be maximized, and <see langword="false"/> is the goal needs to be minimized</param>
-    /// <exception cref="ArgumentNullException"/>
     /// <returns>The result of calculations: the roots and the goal value</returns>
-    public SimplexAlgrorithmResult Run(double[,]? inputTable, string inequalities, string zFunc, bool max = true) {
-        ArgumentNullException.ThrowIfNull(inputTable);
-        double[,]? table = (double[,])inputTable.Clone();
+    public SimplexAlgrorithmResult Run(Function func, Constraint[] constraints, bool max = true) {
+        double[,]? table = GenerateTable(func, constraints);
+
+        _order = constraints.Max(c => c.Coefficients.Length);
 
         log.Clear();
-        log.WriteLine($"Problem definition:\nZ = {zFunc.Trim()} -> {(max ? "max" : "min")}\nwith constraints:\n{inequalities.Trim()}");
+        log.WriteLine($"Problem definition:\nZ = {func} -> {(max ? "max" : "min")}\nwith constraints:\n{string.Join('\n', constraints as IEnumerable<Constraint>)}");
         if (max) log.WriteLine("\nInput simplex table:");
-
-        PrepareAxes(table);
 
         table = max ? FindMaxOptimalSolution(table) : FindMinOptimalSolution(table);
         if (table is null) return SimplexAlgrorithmResult.Default;
@@ -49,24 +49,40 @@ public sealed class SimplexAlgrorithm {
         return _result;
     }
 
-    /// <summary>Prepares row and column headers</summary>
-    /// <param name="table">The simplex table</param>
-    private void PrepareAxes(double[,] table) {
-        _ys = new string[table.GetLength(0)];
-        _xs = new string[table.GetLength(1)];
+    /// <summary>Generates a simplex table</summary>
+    /// <param name="func">The goal function</param>
+    /// <param name="constraints">The constraints of the goal function</param>
+    /// <returns>The simplex table</returns>
+    private double[,]? GenerateTable(Function func, Constraint[] constraints) {
+        int rows = constraints.Length + 1;
+        int cols = constraints.Max(c => c.Length);
 
-        for (int row = 0; row < table.GetLength(0); row++)
-            _ys[row] = row < table.GetLength(0) - 1 ? $"y{row + 1}" : "Z";
+        _ys = new string[rows];
+        _xs = new string[cols];
 
-        for (int col = 0; col < table.GetLength(1); col++)
-            _xs[col] = col < table.GetLength(1) - 1 ? $"-x{col + 1}" : "1";
+        double[,] table = new double[rows, cols];
+
+        int y = 1;
+        for (int row = 0; row < rows - 1; row++) {
+            _ys[row] = constraints[row].Relation != Relation.Equal ? $"y{y++}" : "0";
+            for (int col = 0; col < cols; col++) {
+                table[row, col] = col == cols - 1 || col < constraints[row].Order() ? constraints[row][col] : 0;
+                _xs[col] = col < cols - 1 ? $"-x{col + 1}" : "1";
+            }
+        }
+        _ys[^1] = "Z =";
+
+        for (int col = 0; col < cols; col++)
+            table[rows - 1, col] = col != cols - 1 ? func.Coefficients[col] : 0;
+
+        return table;
     }
 
     /// <summary>Executes modified jordan exclusions</summary>
     /// <param name="table">The simplex table to be modified</param>
     /// <param name="row">The pivot row</param>
     /// <param name="col">The pivot column</param>
-    private void ModifiedJordanExclusions(double[,] table, int row, int col) {
+    private void ModifiedJordanExclusions(double[,] table, int row, int col, bool log = true) {
         double[,] temp = (double[,])table.Clone();
 
         table[row, col] = 1;
@@ -86,7 +102,8 @@ public sealed class SimplexAlgrorithm {
         if (row != table.GetLength(0) - 1 && col != table.GetLength(1) - 1)
             (_xs[col], _ys[row]) = (_ys[row], _xs[col]);
         FixHeaderSigns();
-        LogTable(table);
+
+        if (log) LogTable(table);
     }
 
     /// <summary>Finds a basic feasible solution</summary>
@@ -97,8 +114,11 @@ public sealed class SimplexAlgrorithm {
 
         InvertItemSigns(table);
         LogTable(table);
-        log.WriteLine("Finding a basic feasible solution:\n");
 
+        if (_ys.Any(y => y == "0"))
+            table = RemoveZeroRows(table);
+
+        log.WriteLine("Finding a basic feasible solution:\n");
         while (true) {
             int negativeRow = RowWithNegativeElementInUnitColumn(table);
             if (negativeRow < 0) {
@@ -175,6 +195,9 @@ public sealed class SimplexAlgrorithm {
         return table;
     }
 
+    /// <summary>Removes zero-rows from a simplex table</summary>
+    /// <param name="table">The simplex table</param>
+    /// <returns>A modified simplex table or <see langword="null"/> if input table is <see langword="null"/> or a problem is unlimited from above</returns>
     private double[,]? RemoveZeroRows(double[,]? table) {
         if (table is null) return null;
 
@@ -182,7 +205,8 @@ public sealed class SimplexAlgrorithm {
         while (true) {
             int zeroRow = Array.FindIndex(_ys, y => y.Contains('0'));
             if (zeroRow < 0) {
-                log.WriteLine("The simplex table doesn't have zero-rows");
+                log.WriteLine("The simplex table doesn't have zero-rows.\n");
+                zeroRow = int.MinValue;
                 return table;
             }
 
@@ -194,13 +218,20 @@ public sealed class SimplexAlgrorithm {
             }
 
             int pivotRow = FindPivotRow(table, pivotCol);
-            LogSolvingElement(table, pivotRow, pivotCol);
+            LogSolvingElement(table, pivotRow, pivotCol, pivotRow != zeroRow);
 
-            if (pivotRow == zeroRow)
+            if (pivotRow == zeroRow) {
                 table = CropTable(table, pivotCol);
+                LogTable(table);
+            }
         }
     }
 
+    #region Zero-rows removing steps
+    /// <summary>Finds an index of the column that has a positiv element in the zero-row of a simplex table</summary>
+    /// <param name="table">The simplex table</param>
+    /// <param name="row">The zero-row index</param>
+    /// <returns>The column index</returns>
     private static int ColumnWithPositiveElementInZeroRow(double[,] table, int row) {
         for (int col = 0; col < table.GetLength(1) - 1; col++) {
             if (table[row, col] > 0) {
@@ -210,6 +241,10 @@ public sealed class SimplexAlgrorithm {
         return int.MinValue;
     }
 
+    /// <summary>Crops a simplex table</summary>
+    /// <param name="table">The simplex table</param>
+    /// <param name="pivotCol">The column to be removed</param>
+    /// <returns>The cropped simplex table</returns>
     private double[,] CropTable(double[,] table, int pivotCol) {
         double[,] cropped = new double[table.GetLength(0), table.GetLength(1) - 1];
         string[] croppedColHeader = new string[_xs.Length - 1];
@@ -227,6 +262,7 @@ public sealed class SimplexAlgrorithm {
         _xs = (string[])croppedColHeader.Clone();
         return cropped;
     }
+    #endregion
 
     #region Basic Feasible and Optimal Solutions steps
     /// <summary>Finds an index of the row that has a negative element in the unit column of a simplex table</summary>
@@ -346,7 +382,7 @@ public sealed class SimplexAlgrorithm {
     /// <returns>The roots in text form</returns>
     private string LogRoots(double[,] table) {
         int colCount = table.GetLength(1) - 1;
-        double[] roots = new double[colCount];
+        double[] roots = new double[_order];
         string result = "X = ( ";
 
         for (int yi = 0; yi < _ys.Length; yi++)
@@ -356,8 +392,8 @@ public sealed class SimplexAlgrorithm {
                 roots[coefficient - 1] = table[yi, colCount];
             }
 
-        for (int col = 0; col < colCount; col++) {
-            result += $"{Math.Round(roots[col], Round)}{(col != colCount - 1 ? "; " : " )")}";
+        for (int col = 0; col < _order; col++) {
+            result += $"{Math.Round(roots[col], Round)}{(col != _order - 1 ? "; " : " )")}";
         }
 
         log.WriteLine(result);
@@ -368,9 +404,9 @@ public sealed class SimplexAlgrorithm {
     /// <param name="table">The simplex table</param>
     /// <param name="row">The solving element row index</param>
     /// <param name="col">The solving elemnt column index</param>
-    private void LogSolvingElement(double[,] table, int row, int col) {
+    private void LogSolvingElement(double[,] table, int row, int col, bool logging = true) {
         log.WriteLine($"The solving row: {_ys[row]}\nThe solving column: {_xs[col]}");
-        ModifiedJordanExclusions(table, row, col);
+        ModifiedJordanExclusions(table, row, col, logging);
     }
     #endregion
 }
