@@ -1,6 +1,4 @@
 ﻿using System.Text.RegularExpressions;
-using System.Windows.Media.Imaging;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Lab4.Core.Input;
 

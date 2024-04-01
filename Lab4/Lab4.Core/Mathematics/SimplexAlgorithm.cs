@@ -1,6 +1,5 @@
 ﻿using Lab4.Core.Input;
 using Lab4.Core.Output;
-using System.Diagnostics;
 
 namespace Lab4.Core.Mathematics;
 
@@ -20,7 +19,7 @@ public sealed class SimplexAlgrorithm {
     private int _order;
     private string[] _xs = null!, _ys = null!;
     private double[] _roots = null!;
-    private int addictionalRows = 0;
+    private int additionalRows = 0;
     private SimplexAlgrorithmResult _result;
 
     public SimplexAlgrorithm() {
@@ -39,8 +38,6 @@ public sealed class SimplexAlgrorithm {
         table = GomoriCutoff(table, max);
         if (table is null) return SimplexAlgrorithmResult.Default;
 
-        _result.OptimalSolution = Math.Round(table![table.GetLength(0) - 1, table.GetLength(1) - 1], Round);
-        log.WriteLine($"{(max ? "Max" : "Min")} (Z) = {_result.OptimalSolution}");
         return _result;
     }
 
@@ -49,19 +46,32 @@ public sealed class SimplexAlgrorithm {
         InvertItemSigns(table);
 
         while (true) {
+            RoundTable(table);
             // Basic Feasible Solution
             table = FindBasicFeasibleSolution(table);
 
             // Optimal Solution
-            table = max ? FindMaxOptimalSolution(table) : FindMinOptimalSolution(table);
+            table = !max && additionalRows == 0 ? FindMinOptimalSolution(table) : FindMaxOptimalSolution(table);
             if (table is null) return null;
+
+            _result.OptimalSolution = Math.Round(table![table.GetLength(0) - 1, table.GetLength(1) - 1], Round - 1) * (!max ? -1 : 1);
+            log.WriteLine($"{(max ? "Max" : "Min")} (Z) = {_result.OptimalSolution}");
 
             // Integer Solution
             if (_roots.All(r => Math.Round(r, Round) % 1 == 0))
                 return table;
 
             int row = FindRootWithMaximumFractionalPart();
+            log.WriteLine($"\nOptimal solution was found, but it has a fractional part (and it's maximum part): {_ys[row]} = {Math.Round(table[row, table.GetLength(1) - 1], Round)}");
             table = AddConstraint(table, row);
+        }
+    }
+
+    private void RoundTable(double[,] table) {
+        for (int row = 0;  row < table.GetLength(0); row++) {
+            for (int col = 0; col < table.GetLength(1); col++) {
+                table[row, col] = Math.Round(table[row, col], Round);
+            }
         }
     }
 
@@ -72,7 +82,7 @@ public sealed class SimplexAlgrorithm {
 
         for (int i = 0; i < _roots.Length; i++) {
             double fractionalpart = GetFractionalPart(_roots[i]);
-            fractionalParts[i] = fractionalpart;
+            fractionalParts[i] = -fractionalpart;
             if (maxFractionalPart < fractionalpart) {
                 maxFractionalPart = fractionalpart;
                 index = i + 1;
@@ -86,6 +96,7 @@ public sealed class SimplexAlgrorithm {
         double[,] newTable = new double[table.GetLength(0) + 1, table.GetLength(1)];
         string[] newYs = new string[_ys.Length + 1];
 
+        log.WriteLine("\nAn с constraint has been drawn up:");
         for (int row = 0; row < table.GetLength(0) - 1; row++) {
             newYs[row] = _ys[row];
             for (int col = 0; col < newTable.GetLength(1); col++) {
@@ -93,17 +104,25 @@ public sealed class SimplexAlgrorithm {
             }
         }
 
+        string coefs = string.Empty;
         for (int col = 0; col < newTable.GetLength(1); col++) {
-            double coefficient = -GetFractionalPart(newTable[contributorRow, col]);
-            newTable[newTable.GetLength(0) - 2, col] = coefficient;
+            double coefficient = GetFractionalPart(newTable[contributorRow, col]);
+            newTable[newTable.GetLength(0) - 2, col] = -coefficient;
+
+            if (col < newTable.GetLength(1) - 1)
+                coefs += $"{Math.Round(coefficient, Round)} * {_xs[col][1..]} + ";
+            else
+                coefs += $"(-{Math.Round(coefficient, Round)}) => 0";
         }
-        newYs[newTable.GetLength(0) - 2] = $"s{++addictionalRows}";
+        newYs[newTable.GetLength(0) - 2] = $"s{++additionalRows}";
+        log.WriteLine($"s{additionalRows} = {coefs}");
 
         for (int col = 0; col < newTable.GetLength(1); col++) {
             newTable[newTable.GetLength(0) - 1, col] = table[table.GetLength(0) - 1, col];
             newYs[newTable.GetLength(0) - 1] = _ys[table.GetLength(0) - 1];
         }
 
+        log.WriteLine("\nThe simplex table with new constraints: ");
         _ys = newYs;
         return newTable;
     }
@@ -229,7 +248,6 @@ public sealed class SimplexAlgrorithm {
         table = FindMaxOptimalSolution(table);
         if (table is null) return null;
 
-        table[table.GetLength(0) - 1, table.GetLength(1) - 1] *= -1;
         return table;
     }
 
@@ -297,8 +315,7 @@ public sealed class SimplexAlgrorithm {
 
 
     #region Output
-
-    private void LogTable(double[,] table) {
+        private void LogTable(double[,] table) {
         string result = "\n";
         string[,] extendedTable = GetExtendedTable(table, _xs, _ys);
 
@@ -320,7 +337,7 @@ public sealed class SimplexAlgrorithm {
         for (int row = 1; row < extendedTable.GetLength(0); row++) {
             extendedTable[row, 0] = rowHeaders[row - 1].PadLeft(offset) + ' ';
             for (int col = 1; col < extendedTable.GetLength(1); col++) {
-                extendedTable[row, col] = $"{Math.Round(content[row - 1, col - 1], Round)}".PadLeft(offset) + ' ';
+                extendedTable[row, col] = $"{Math.Round(content[row - 1, col - 1], Round - 1)}".PadLeft(offset) + ' ';
                 extendedTable[0, col] = columnHeaders[col - 1].PadLeft(offset) + ' ';
             }
         }
