@@ -397,7 +397,7 @@ public sealed class SimplexAlgrorithm {
         }
 
         log.WriteLine(result);
-        return result;
+        return result[4..];
     }
 
     /// <summary>Makes the simplex table solving element look like text</summary>
