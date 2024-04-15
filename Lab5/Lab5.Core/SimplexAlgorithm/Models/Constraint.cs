@@ -91,7 +91,7 @@ public class Constraint(double[] coefficients, double constant, Relation relatio
             if (this[i] == 0) continue;
 
             if (i < Order) {
-                result += (i > 0 && this[i] > 0 ? "+" : "") + this[i] switch {
+                result += (started && this[i] > 0 ? "+" : "") + this[i] switch {
                     0 => "",
                     1 => $"{Variable}{i + 1}",
                     -1 => $"-{Variable}{i + 1}",

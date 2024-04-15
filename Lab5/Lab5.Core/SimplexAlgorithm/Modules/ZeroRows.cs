@@ -24,7 +24,7 @@ internal class ZeroRows : Module {
 
             if (pivotRow == zeroRow) {
                 tableau = this.CropTable(tableau, pivotCol);
-                Designer.LogTable(tableau);
+                Designer.LogTableau(tableau);
             }
         }
     }

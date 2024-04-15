@@ -10,6 +10,3 @@ D:\Data\Homework\Універ\2 course\Semester 2\АСППР\Programs\Lab5\Lab5.
 D:\Data\Homework\Універ\2 course\Semester 2\АСППР\Programs\Lab5\Lab5.Core\obj\Debug\net8.0-windows\refint\Lab5.Core.dll
 D:\Data\Homework\Універ\2 course\Semester 2\АСППР\Programs\Lab5\Lab5.Core\obj\Debug\net8.0-windows\Lab5.Core.pdb
 D:\Data\Homework\Універ\2 course\Semester 2\АСППР\Programs\Lab5\Lab5.Core\obj\Debug\net8.0-windows\ref\Lab5.Core.dll
-D:\Data\Homework\Універ\2 course\Semester 2\АСППР\Programs\Lab5\Lab5.Core\bin\Debug\net8.0-windows\Lab5.Core.exe
-D:\Data\Homework\Універ\2 course\Semester 2\АСППР\Programs\Lab5\Lab5.Core\bin\Debug\net8.0-windows\Lab5.Core.runtimeconfig.json
-D:\Data\Homework\Універ\2 course\Semester 2\АСППР\Programs\Lab5\Lab5.Core\obj\Debug\net8.0-windows\Lab5.Core.genruntimeconfig.cache

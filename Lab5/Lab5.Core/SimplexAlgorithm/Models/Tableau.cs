@@ -1,5 +1,5 @@
 ﻿namespace Lab5.Core.SimplexAlgorithm.Models;
-internal struct Tableau(double[,] data, string[] rows, string[] columns, char[] rowVars, char[] colVars) {
+internal struct Tableau(double[,] data, string[] rows, string[] columns, char[] rowVars, char[] colVars, int order) {
     private char[] _rowVars = rowVars;
     private char[] _colVars = colVars;
 
@@ -10,7 +10,7 @@ internal struct Tableau(double[,] data, string[] rows, string[] columns, char[] 
 
     internal readonly int Offset => this._colVars.Length * 4 + 3;
     internal readonly int Round => 3;
-    internal readonly int Order => this.Columns.Length - 1;
+    internal readonly int Order => order;
     internal readonly int Width => this.Data is null ? 0 : this.Data.GetLength(1);
     internal readonly int Height => this.Data is null ? 0 : this.Data.GetLength(0);
 
@@ -19,8 +19,8 @@ internal struct Tableau(double[,] data, string[] rows, string[] columns, char[] 
         set { if (this.Data is not null && row < this.Height && col < this.Width) Data[row, col] = value; }
     }
 
-    internal Tableau(double[,] data, string[] rows, string[] columns)
-        : this(data, rows, columns, ['y'], ['x']) { }
+    internal Tableau(double[,] data, string[] rows, string[] columns, int order)
+        : this(data, rows, columns, ['y'], ['x'], order) { }
 
     internal void Transpose() {
         if (this.Data is null) throw new ArgumentNullException(nameof(this.Data));
@@ -58,7 +58,7 @@ internal struct Tableau(double[,] data, string[] rows, string[] columns, char[] 
         char[] rowVars = tableau._colVars;
         char[] colVars = tableau._rowVars;
 
-        return new(transposed, tableau.Columns, tableau.Rows, rowVars, colVars);
+        return new(transposed, tableau.Columns, tableau.Rows, rowVars, colVars, tableau.Height - 1);
     }
 
     internal static Tableau InvertSigns(Tableau tableau) {

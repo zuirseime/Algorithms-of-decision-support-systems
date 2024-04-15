@@ -2,6 +2,16 @@
 
 namespace Lab5.Core.SimplexAlgorithm.Modules;
 internal class Module {
+    protected int FindPivotColumn(Tableau tableau, int row) {
+        if (tableau.Data is null) throw new ArgumentNullException(nameof(tableau.Data));
+
+        for (int col = 0; col < tableau.Width - 1; col++) {
+            if (Math.Round(tableau[row, col], 2) == 0) continue;
+            if (tableau.Data[row, col] < 0) return col;
+        }
+        return int.MinValue;
+    }
+
     protected int FindPivotRow(Tableau tableau, int col) {
         if (tableau.Data is null) throw new ArgumentNullException(nameof(tableau.Data));
 

@@ -10,35 +10,16 @@ public class SA(char[] functions, char[] rowVariables, char[] columnVariables) {
     private Tableau _tableau;
     private SAResult _result = SAResult.Default;
 
-    private ZeroRows _zeroRows = new();
+    //private ZeroRows _zeroRows = new();
     private BasicFeasibleSolution _basicFeasibleSolution = new();
     private OptimalSolution _optimalSolution = new();
 
     public SAResult Run(Function func, Constraint[] constraints, bool max = true) {
         Log.Clear();
-        Log.WriteLine($"Straight problem definition:\nZ = {func} -> {(max ? "max" : "min")}\n" +
-                      $"with constraints:\n{string.Join('\n', constraints.AsEnumerable())}");
+        Designer.StraightProblemDefinition(func, constraints, max);
 
         this.GenerateTableau(func, constraints);
-
-        if (!max) {
-            Log.WriteLine("\nGoing to the problem of maximizing the objective function Z':");
-
-            int rows = this._tableau.Height;
-            int cols = this._tableau.Width;
-
-            string funcStr = string.Empty;
-            for (int col = 0; col < cols - 1; col++) {
-                this._tableau[rows - 1, col] = this._tableau[rows - 1, col] *= -1;
-                funcStr += $"{(this._tableau[rows - 1, col] >= 0 
-                    ? this._tableau[rows - 1, col] 
-                    : -this._tableau[rows - 1, col])}*X[{col + 1}]{(col != cols - 2 
-                    ? this._tableau[rows - 1, col] >= 0 ? " + " 
-                    : " - " : "")}";
-            }
-            Log.WriteLine($"Z' = {funcStr} -> max");
-        }
-        Log.WriteLine("\nInput simplex tableau:");
+        if (!max) Designer.MinToMax(this._tableau);
 
         this.Execute(max);
 
@@ -80,53 +61,18 @@ public class SA(char[] functions, char[] rowVariables, char[] columnVariables) {
                                   : string.Join(", ", columnVariables.Reverse().Select(v => $"{v}{col + 1}"))) + ")";
         }
 
-        this._tableau = new Tableau(tableau, rowHeaders, colHeaders, rowVariables, columnVariables);
+        this._tableau = new Tableau(tableau, rowHeaders, colHeaders, rowVariables, columnVariables, constraints.Max(c => c.Order));
         this._tableau.FixHeaders();
-    }
-
-    private void DualProblemDefinition(bool max) {
-        Tableau dualTableau = Tableau.Transpose(this._tableau);
-
-        int rows = dualTableau.Height;
-        int cols = dualTableau.Width;
-
-        double[] funcCoeffs = new double[cols - 1];
-        for (int col = 0; col < cols - 1; col++) {
-            funcCoeffs[col] = -dualTableau[rows - 1, col];
-        }
-        double funcConst = -dualTableau[rows - 1, cols - 1];
-        Function func = new(funcCoeffs, funcConst, 'u');
-
-        Constraint[] constraints = new Constraint[rows - 1];
-        for (int row = 0; row < rows - 1; row++) {
-            double[] constrCoeffs = new double[cols - 1];
-            for (int col = 0; col < cols - 1; col++) {
-                constrCoeffs[col] = dualTableau[row, col];
-            }
-            double constrConst = dualTableau[row, cols - 1];
-
-            constraints[row] = new Constraint(constrCoeffs, constrConst, Relation.GreaterOrEqual, 'u');
-        }
-
-        Log.WriteLine($"\nDual problem definition:\nW = {func} -> {(max ? "min" : "max")}\n" +
-                      $"with constraints:\n{string.Join('\n', constraints.AsEnumerable())}");
-
-        if (dualTableau.Columns.Any(c => c.Contains('0'))) {
-            Log.WriteLine("Free variables: " + string.Join(", ", Enumerable.Range(0, cols)
-                .Where(col => dualTableau.Columns[col].Contains('0'))
-                .Select(col => $"u{col + 1}")));
-        }
     }
 
     private void Execute(bool max) {
         if (this._tableau.Data is null) return;
+
         this._tableau.InvertSigns();
-        Designer.LogTable(this._tableau);
+        Designer.ShowInputTableaus(this._tableau, max);
 
-        this.DualProblemDefinition(max);
-
-        if (this._tableau.Rows.Any(h => h.Contains('0')))
-            this._tableau = this._zeroRows.Remove(this._tableau);
+        //if (this._tableau.Rows.Any(h => h.Contains('0')))
+        //    this._tableau = this._zeroRows.Remove(this._tableau);
 
         (this._tableau, this._result.Roots) = this._basicFeasibleSolution.Find(this._tableau);
 
@@ -142,7 +88,7 @@ public class SA(char[] functions, char[] rowVariables, char[] columnVariables) {
             this._tableau.Data![this._tableau.Height - 1, this._tableau.Width - 1],
             this._tableau.Round - 1
         );
-        Log.WriteLine($"\n{(max ? "Max" : "Min")} (Z) = {this._result.Solution}" +
-                      $"\n{(!max ? "Max" : "Min")} (W) = {this._result.Solution}");
+
+        Designer.ShowSolution(this._result.Solution, max);
     }
 }

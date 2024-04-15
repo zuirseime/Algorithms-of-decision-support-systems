@@ -1,0 +1,23 @@
+﻿<Window x:Class="Lab6.App.Simulation"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Lab6.App"
+        mc:Ignorable="d"
+        Title="Simulation" Height="600" Width="1100">
+    <Grid>
+        <DataGrid x:Name="log" AutoGenerateColumns="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" ColumnHeaderHeight="30">
+            <DataGrid.Columns>
+                <DataGridTextColumn Width="*" Binding="{Binding ID}" Header="#" />
+                <DataGridTextColumn Width="*" Binding="{Binding NumberA}" Header="Player A random number" />
+                <DataGridTextColumn Width="*" Binding="{Binding StrategyA}" Header="Player A strategy" />
+                <DataGridTextColumn Width="*" Binding="{Binding NumberB}" Header="Player B random number" />
+                <DataGridTextColumn Width="*" Binding="{Binding StrategyB}" Header="Player B strategy" />
+                <DataGridTextColumn Width="*" Binding="{Binding GainA}" Header="Player A gain" />
+                <DataGridTextColumn Width="*" Binding="{Binding AccumulatedGainA}" Header="Player A accumulated gain" />
+                <DataGridTextColumn Width="*" Binding="{Binding AverageGainA}" Header="Player A average gain" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>

@@ -9,13 +9,13 @@ internal class OptimalSolution : Module {
         while (true) {
             int pivotCol = FindPivotColumn(tableau, tableau.Height - 1);
             if (pivotCol < 0) {
-                Log.WriteLine("The optimal solution has been found:");
+                Log.WriteLine("\nThe optimal solution has been found:", true);
                 return (tableau, Designer.LogRoots(tableau));
             }
 
             int pivotRow = FindPivotRow(tableau, pivotCol);
             if (pivotRow < 0) {
-                Log.WriteLine("Problem is unlimited from above.");
+                Log.WriteLine("Problem is unlimited from above.", true);
                 return (new Tableau(), string.Empty);
             }
 
@@ -34,15 +34,5 @@ internal class OptimalSolution : Module {
 
         tableau.Data[rows - 1, cols - 1] *= -1;
         return (tableau, roots);
-    }
-
-    private int FindPivotColumn(Tableau tableau, int row) {
-        if (tableau.Data is null) throw new ArgumentNullException(nameof(tableau.Data));
-
-        for (int col = 0; col < tableau.Width - 1; col++) {
-            if (Math.Round(tableau[row, col], 2) == 0) continue;
-            if (tableau[row, col] < 0) return col;
-        }
-        return int.MinValue;
     }
 }

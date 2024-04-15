@@ -37,7 +37,10 @@ public partial class MainWindow : Window {
 
         for (int row = 0; row < rows - 1; row++)
             for (int col = 0; col < cols; col++)
-                table[row, col] = col != cols - 1 ? constraintsArray[row].Coefficients[col] : constraintsArray[row].Constant;
+                table[row, col] = col != cols - 1 
+                    ? col < constraintsArray[row].Coefficients.Length 
+                    ? constraintsArray[row].Coefficients[col] : 0 
+                    : constraintsArray[row].Constant;
 
         for (int col = 0; col < cols; col++)
             table[rows - 1, col] = col != cols - 1 ? function.Coefficients[col] : 0;
