@@ -61,7 +61,7 @@ namespace Lab6.App {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/Lab6.App;component/simulation.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/Lab6.App;V1.0.0.0;component/simulation.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\Simulation.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);
