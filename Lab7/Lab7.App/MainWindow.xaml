@@ -1,0 +1,97 @@
+﻿<Window x:Class="Lab7.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Lab7.App.Controls"
+        mc:Ignorable="d"
+        Title="Game with Nature" Height="442" Width="450"
+        FontFamily="Consolas" FontSize="12"
+        WindowStartupLocation="CenterScreen">
+    <Grid Margin="5">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width=".7*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0" Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="The utility matrix of the results U" Grid.Row="0" />
+            <TextBox x:Name="utilityMatrix" Grid.Row="1" 
+                     AcceptsReturn="True" 
+                     VerticalAlignment="Stretch"
+                     VerticalScrollBarVisibility="Visible"
+                     HorizontalScrollBarVisibility="Visible" />
+        </Grid>
+
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="Factor Y: " Grid.Row="0" />
+                <local:NumericUpDown Grid.Column="1" Min="0" Max="1" Step="0.01" x:Name="factor"/>
+            </Grid>
+
+            <StackPanel Grid.Row="1" Margin="5">
+                <TextBlock Text="Nature strategies" Grid.Row="0" />
+                <TextBox x:Name="probabilities" />
+            </StackPanel>
+            
+            <Button Grid.Row="2" Content="Find optimal strategies" Padding="5" Margin="5" Click="FindOptimalStrategies" />
+
+            <StackPanel Grid.Row="3" Margin="5">
+                <TextBlock Text="Wald criterion" Grid.Row="0" />
+                <TextBox x:Name="wald" IsReadOnly="True" />
+            </StackPanel>
+
+            <StackPanel Grid.Row="4" Margin="5">
+                <TextBlock Text="Maximax criterion" Grid.Row="0" />
+                <TextBox x:Name="maximax" IsReadOnly="True" />
+            </StackPanel>
+
+            <StackPanel Grid.Row="5" Margin="5">
+                <TextBlock Text="Hurwitz criterion" Grid.Row="0" />
+                <TextBox x:Name="hurwitz" IsReadOnly="True" />
+            </StackPanel>
+
+            <StackPanel Grid.Row="6" Margin="5">
+                <TextBlock Text="Savage criterion" Grid.Row="0" />
+                <TextBox x:Name="savage" IsReadOnly="True" />
+            </StackPanel>
+
+            <StackPanel Grid.Row="7" Margin="5">
+                <TextBlock Text="Bayes criterion" Grid.Row="0" />
+                <TextBox x:Name="bayes" IsReadOnly="True" />
+            </StackPanel>
+
+            <StackPanel Grid.Row="8" Margin="5">
+                <TextBlock Text="Laplace criterion" Grid.Row="0" />
+                <TextBox x:Name="laplace" IsReadOnly="True" />
+            </StackPanel>
+
+            <StackPanel Grid.Row="9" Margin="5">
+                <TextBlock Text="Common criterion" Grid.Row="0" />
+                <TextBox x:Name="common" IsReadOnly="True" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

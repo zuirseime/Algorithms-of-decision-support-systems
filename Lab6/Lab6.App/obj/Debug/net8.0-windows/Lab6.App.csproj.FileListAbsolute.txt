@@ -22,9 +22,6 @@ D:\Data\Homework\Універ\2 course\Semester 2\АСППР\Programs\Lab6\Lab6.
 D:\Data\Homework\Універ\2 course\Semester 2\АСППР\Programs\Lab6\Lab6.App\obj\Debug\net8.0-windows\Controls\NumericUpDown.g.cs
 D:\Data\Homework\Універ\2 course\Semester 2\АСППР\Programs\Lab6\Lab6.App\obj\Debug\net8.0-windows\GeneratedInternalTypeHelper.g.cs
 D:\Data\Homework\Універ\2 course\Semester 2\АСППР\Programs\Lab6\Lab6.App\obj\Debug\net8.0-windows\Controls\NumericUpDown.baml
-D:\Data\Homework\Універ\2 course\Semester 2\АСППР\Programs\Lab6\Lab6.App\bin\Debug\net8.0-windows\Lab6.Core.deps.json
-D:\Data\Homework\Універ\2 course\Semester 2\АСППР\Programs\Lab6\Lab6.App\bin\Debug\net8.0-windows\Lab6.Core.runtimeconfig.json
-D:\Data\Homework\Універ\2 course\Semester 2\АСППР\Programs\Lab6\Lab6.App\bin\Debug\net8.0-windows\Lab6.Core.exe
 D:\Data\Homework\Універ\2 course\Semester 2\АСППР\Programs\Lab6\Lab6.App\bin\Debug\net8.0-windows\Lab6.Core.dll
 D:\Data\Homework\Універ\2 course\Semester 2\АСППР\Programs\Lab6\Lab6.App\bin\Debug\net8.0-windows\Lab6.Core.pdb
 D:\Data\Homework\Універ\2 course\Semester 2\АСППР\Programs\Lab6\Lab6.App\obj\Debug\net8.0-windows\Lab6.App.csproj.AssemblyReference.cache
