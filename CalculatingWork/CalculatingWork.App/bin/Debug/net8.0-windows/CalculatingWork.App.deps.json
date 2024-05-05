@@ -1,0 +1,36 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "CalculatingWork.App/1.0.0": {
+        "dependencies": {
+          "CalculatingWork.Core": "1.0.0"
+        },
+        "runtime": {
+          "CalculatingWork.App.dll": {}
+        }
+      },
+      "CalculatingWork.Core/1.0.0": {
+        "runtime": {
+          "CalculatingWork.Core.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "CalculatingWork.App/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "CalculatingWork.Core/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

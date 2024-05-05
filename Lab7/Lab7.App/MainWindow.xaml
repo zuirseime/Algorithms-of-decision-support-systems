@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Game with Nature" Height="442" Width="450"
         FontFamily="Consolas" FontSize="12"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen" Closing="OnClosing">
     <Grid Margin="5">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />

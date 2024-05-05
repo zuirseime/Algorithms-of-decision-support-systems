@@ -57,4 +57,6 @@ public partial class MainWindow : Window {
 
         return data;
     }
+
+    private void OnClosing(object sender, System.ComponentModel.CancelEventArgs e) => Application.Current.Shutdown();
 }
