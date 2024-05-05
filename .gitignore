@@ -1,1 +1,6 @@
-/.vs
+.vs/
+obj/
+bin/
+
+*.csproj
+*.exe
