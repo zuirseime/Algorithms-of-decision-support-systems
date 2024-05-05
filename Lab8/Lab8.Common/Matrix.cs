@@ -106,11 +106,13 @@ public struct Matrix {
         extendedTable[0, 0] = "".PadLeft(leftEdge) + ' ';
 
         for (int row = 1; row < rows; row++) {
-            extendedTable[row, 0] = _baseRows[row - 1].ToString().PadLeft(leftEdge) + ' ';
+            extendedTable[row, 0] = Rows[row - 1].ToString().PadLeft(leftEdge) + ' ';
+            //extendedTable[row, 0] = _baseRows[row - 1].ToString().PadLeft(leftEdge) + ' ';
         }
 
         for (int col = 1; col < cols; col++) {
-            extendedTable[0, col] = _baseCols[col - 1].ToString().PadLeft(offset) + ' ';
+            extendedTable[0, col] = Cols[col - 1].ToString().PadLeft(offset) + ' ';
+            //extendedTable[0, col] = _baseCols[col - 1].ToString().PadLeft(offset) + ' ';
         }
 
         for (int row = 1; row < rows; row++) {

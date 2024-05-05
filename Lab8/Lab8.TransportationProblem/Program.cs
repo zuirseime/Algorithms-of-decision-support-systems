@@ -1,7 +1,7 @@
 ﻿namespace Lab8.TransportationProblem;
 internal class Program {
     public static void Main(string[] args) {
-        NorthWestCorner nwc = new();
+        TP nwc = new MinimumItem();
 
         string matrix = """
             6 3 2
