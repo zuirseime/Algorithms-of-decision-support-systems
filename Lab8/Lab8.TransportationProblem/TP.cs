@@ -7,59 +7,113 @@ public abstract class TP {
     protected TPResult _result;
 
     public TPResult Run(string matrix, string inputs, string outputs) {
-        try {
-            return Run(Matrix.Parse(matrix), StringToArray(inputs), StringToArray(outputs));
-        } catch (Exception ex) {
-            return _result;
-        }
+        return Run(Matrix.Parse(matrix), StringToArray(inputs), StringToArray(outputs));
     }
 
     public TPResult Run(Matrix matrix, double[] inputs, double[] outputs) {
-        this._matrix = matrix;
+        _matrix = matrix;
 
         try {
-            this._matrix.Load(outputs, inputs);
+            _matrix.Load(outputs, inputs);
         } catch (ArgumentException ex) {
 
         }
 
         FindReferencePlan();
+        FindOptimalPlan();
 
         return _result;
     }
 
     protected virtual void FindReferencePlan() {
-        int r = 0, c = 0;
-        Console.WriteLine(_matrix);
-
-        while (true) {
-            double min = Math.Min(_matrix.Rows[r], _matrix.Cols[c]);
-            _matrix[r, c] = min;
-            _matrix.Rows[r] -= min;
-            _matrix.Cols[c] -= min;
-
-            Console.WriteLine(_matrix);
-
-            if (_matrix.Rows[r] - min >= 0) {
-                c++;
-                if (c >= _matrix.Width) break;
-            } else if (_matrix.Cols[c] == 0) {
-                r++;
-                c++;
-                if (c >= _matrix.Width & r >= _matrix.Height) break;
-            } else {
-                r++;
-                if (r >= _matrix.Height) break;
-            }
-        }
+        Console.WriteLine("Finding reference plan:");
     }
 
     private void FindOptimalPlan() {
-        throw new NotImplementedException();
+        Console.WriteLine("Finding optimal plan:");
+
+        while (true) {
+            FindPotentials();
+            FindIndirectCosts();
+            if (!FindProblemCells(out int row, out int col)) break;
+        }
     }
 
-    private void FindTotalCost() {
-        throw new NotImplementedException();
+    private void FindPotentials() {
+        _matrix['y', 2, 0] = 0;
+        int r = 0, c = 0;
+        while (true) {
+            if (_matrix[0, r, c] != 0) {
+                if (double.IsNaN(_matrix['x', 2, c]) && !double.IsNaN(_matrix['y', 2, r])) {
+                    _matrix['x', 2, c] = _matrix[1, r, c] - _matrix['y', 2, r];
+                }
+                if (double.IsNaN(_matrix['y', 2, r]) && !double.IsNaN(_matrix['x', 2, c])) {
+                    _matrix['y', 2, r] = _matrix[1, r, c] - _matrix['x', 2, c];
+                }
+            }
+
+            c++;
+            if (c >= _matrix.Width) {
+                c = 0;
+                r++;
+            }
+
+            if (r >= _matrix.Height) {
+                if (_matrix['x', 2].Contains(double.NaN) || _matrix['y', 2].Contains(double.NaN)) {
+                    r = c = 0;
+                } else break;
+            }
+        }
+
+        Console.WriteLine(_matrix.ToString(true));
+    }
+
+    private void FindIndirectCosts() {
+        for (int r = 0; r < _matrix.Height; r++) {
+            for (int c = 0; c < _matrix.Width; c++) {
+                if (_matrix[0, r, c] == 0) {
+                    _matrix[2, r, c] = _matrix['x', 2, c] + _matrix['y', 2, r];
+                }
+            }
+        }
+
+        Console.WriteLine(_matrix.ToString(true, 2));
+    }
+
+    private bool FindProblemCells(out int row, out int col) {
+        row = int.MinValue;
+        col = int.MinValue;
+        double maxDiff = double.MinValue;
+
+        for (int r = 0; r < _matrix.Height; r++) {
+            for (int c = 0; c < _matrix.Width; c++) {
+                double diff = _matrix[2, r, c] - _matrix[1, r, c];
+                if (diff > maxDiff) {
+                    maxDiff = diff;
+                    row = r;
+                    col = c;
+                }
+            }
+        }
+
+        Console.WriteLine($"\n\n[{row}, {col}] = {maxDiff}");
+        return row == int.MinValue || col == int.MinValue;
+    }
+
+    private void FindCellToOptimize(int row, int col) {
+        while (true) {
+
+        }
+    }
+
+    protected double FindTotalCost() {
+        double sum = 0;
+        for (int r = 0; r < _matrix.Height; r++) {
+            for (int c = 0; c < _matrix.Width; c++) {
+                sum += _matrix[0, r, c] * _matrix[1, r, c];
+            }
+        }
+        return sum;
     }
 
     protected static double[] StringToArray(string text) 
