@@ -1,9 +1,9 @@
 ﻿namespace Lab8.TransportationProblem;
 public class NorthWestCorner : TP {
-    protected override void FindReferencePlan() {
-        base.FindReferencePlan();
+    protected override void FindFeasiblePlan() {
+        base.FindFeasiblePlan();
         int r = 0, c = 0;
-        Console.WriteLine(_matrix);
+        LogTable(0, 1);
 
         while (true) {
             double min = Math.Min(_matrix['y', 1, r], _matrix['x', 1, c]);
@@ -11,7 +11,7 @@ public class NorthWestCorner : TP {
             _matrix['y', 1, r] -= min;
             _matrix['x', 1, c] -= min;
 
-            Console.WriteLine(_matrix);
+            LogTable(0, 1);
 
             if (_matrix['y', 1, r] - min >= 0) {
                 c++;
@@ -26,6 +26,7 @@ public class NorthWestCorner : TP {
             }
         }
 
+        LogTable(0, 0);
         Console.WriteLine($"Preference plan cost: {FindTotalCost()}\n");
     }
 }

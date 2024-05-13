@@ -1,9 +1,9 @@
 ﻿namespace Lab8.TransportationProblem;
 public class MinimumItem : TP {
-    protected override void FindReferencePlan() {
-        base.FindReferencePlan();
+    protected override void FindFeasiblePlan() {
+        base.FindFeasiblePlan();
         while (true) {
-            Console.WriteLine(_matrix);
+            LogTable(0, 1);
 
             if (_matrix['y', 1].All(v => v == 0) && _matrix['x', 1].All(v => v == 0)) break;
 
@@ -31,6 +31,7 @@ public class MinimumItem : TP {
             }
         }
 
+        LogTable(0, 0);
         Console.WriteLine($"Preference plan cost: {FindTotalCost()}\n");
     }
 

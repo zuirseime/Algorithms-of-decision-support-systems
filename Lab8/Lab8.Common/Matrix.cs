@@ -1,8 +1,8 @@
 ﻿namespace Lab8.Common;
 
 public struct Matrix {
-    public readonly int Width => _basis.GetLength(1);
-    public readonly int Height => _basis.GetLength(0);
+    public readonly int Width => _plan.GetLength(1);
+    public readonly int Height => _plan.GetLength(0);
 
     private double[] _baseRows = null!;
     private double[] _rows = null!;
@@ -19,10 +19,10 @@ public struct Matrix {
         { 'x', colLayers }
     };
 
-    private double[,] _basis;
+    private double[,] _plan;
     private double[,] _costs;
     private double[,] _indirectCosts;
-    private readonly double[][,] layers => [_basis, _costs, _indirectCosts];
+    private readonly double[][,] layers => [_plan, _costs, _indirectCosts];
 
     public double[] this[char axis, int layer] {
         get => axes[axis][layer];
@@ -48,9 +48,9 @@ public struct Matrix {
         get {
             int maxLength = int.MinValue;
 
-            for (int i = 0; i < _basis.GetLength(0); i++) {
-                for (int j = 0; j < _basis.GetLength(1); j++) {
-                    maxLength = Math.Max(maxLength, $"{Globals.Round(_basis[i, j])}".Length);
+            for (int i = 0; i < _plan.GetLength(0); i++) {
+                for (int j = 0; j < _plan.GetLength(1); j++) {
+                    maxLength = Math.Max(maxLength, $"{Globals.Round(_plan[i, j])}".Length);
                 }
             }
 
@@ -60,9 +60,18 @@ public struct Matrix {
 
     public Matrix(double[,] data) {
         _costs = (double[,])data.Clone();
-        var indirectCosts = Enumerable.Repeat(Enumerable.Repeat(double.NaN, data.GetLength(1)).ToArray(), data.GetLength(0)).ToArray();
+        _plan = new double[data.GetLength(0), data.GetLength(1)];
+        //FillIndirectCosts(data.GetLength(0), data.GetLength(1));
+    }
+
+    public void FillIndirectCosts(int height, int width) {
+        var indirectCosts = Enumerable.Repeat(Enumerable.Repeat(double.NaN, height).ToArray(), width).ToArray();
         _indirectCosts = Convert(indirectCosts);
-        _basis = new double[data.GetLength(0), data.GetLength(1)];
+    }
+
+    public void FillPotentialsWithNaN(int rows, int cols) {
+        _rowPotentials = Enumerable.Repeat(double.NaN, rows).ToArray();
+        _colPotentials = Enumerable.Repeat(double.NaN, cols).ToArray();
     }
 
     public void Load(double[] rows, double[] cols) {
@@ -74,8 +83,7 @@ public struct Matrix {
         _rows = (double[])rows.Clone();
         _cols = (double[])cols.Clone();
 
-        _rowPotentials = Enumerable.Repeat(double.NaN, rows.Length).ToArray();
-        _colPotentials = Enumerable.Repeat(double.NaN, cols.Length).ToArray();
+        //FillPotentialsWithNaN(rows.Length, cols.Length);s
 
         _baseRows = (double[])rows.Clone();
         _baseCols = (double[])cols.Clone();
@@ -123,11 +131,11 @@ public struct Matrix {
     private static ArgumentException GetSizeException(string param) =>
         new ArgumentException($"{nameof(Matrix)}: {nameof(Load)}(..., {param})");
 
-    public override string ToString() => ToString(false, 0);
+    public override string ToString() => ToString(0, 0);
 
-    public string ToString(bool full = false, int layer = 0) {
+    public string ToString(int contentLayer = 0, int headerLayer = 0) {
         string result = string.Empty;
-        var extendedTableau = GetExtendedArray(full, layer);
+        var extendedTableau = GetExtendedArray(contentLayer, headerLayer);
 
         for (int row = 0; row < extendedTableau.GetLength(0); row++) {
             for (int col = 0; col < extendedTableau.GetLength(1); col++)
@@ -138,11 +146,11 @@ public struct Matrix {
         return result;
     }
 
-    private string[,] GetExtendedArray(bool full, int layer) {
-        if (_basis is null) throw new ArgumentNullException(nameof(_basis));
+    private string[,] GetExtendedArray(int contentLayer, int headerLayer) {
+        if (_plan is null) throw new ArgumentNullException(nameof(_plan));
 
-        int rows = Height + (full ? 2 : 1);
-        int cols = Width + (full ? 2 : 1);
+        int rows = Height + 1;
+        int cols = Width + 1;
 
         string[,] extendedTable = new string[rows, cols];
 
@@ -151,30 +159,18 @@ public struct Matrix {
 
         extendedTable[0, 0] = "".PadLeft(leftEdge) + ' ';
 
-        for (int row = 1; row < rows - (full ? 1 : 0); row++) {
-            //extendedTable[row, 0] = Rows[row - 1].ToString().PadLeft(leftEdge) + ' ';
-            extendedTable[row, 0] = _baseRows[row - 1].ToString().PadLeft(leftEdge) + ' ';
+        for (int row = 1; row < rows; row++) {
+            extendedTable[row, 0] = this['y', headerLayer, row - 1].ToString().PadLeft(leftEdge) + ' ';
         }
 
-        for (int col = 1; col < cols - (full ? 1 : 0); col++) {
-            //extendedTable[0, col] = Cols[col - 1].ToString().PadLeft(offset) + ' ';
-            extendedTable[0, col] = _baseCols[col - 1].ToString().PadLeft(offset) + ' ';
+        for (int col = 1; col < cols; col++) {
+            extendedTable[0, col] = this['x', headerLayer, col - 1].ToString().PadLeft(offset) + ' ';
         }
 
-        for (int row = 1; row < rows - (full ? 1 : 0); row++) {
-            for (int col = 1; col < cols - (full ? 1 : 0); col++) {
-                extendedTable[row, col] = $"{Globals.Round(this[layer, row - 1, col - 1])}".PadLeft(offset) + ' ';
-            }
-        }
-
-        if (full) {
-            for (int row = 1; row < rows - 1; row++) {
-                extendedTable[row, cols - 1] = _rowPotentials[row - 1].ToString().PadLeft(offset) + ' ';
-            }
-
-            extendedTable[rows - 1, 0] = "".PadLeft(leftEdge) + ' ';
-            for (int col = 1; col < cols - 1; col++) {
-                extendedTable[rows - 1, col] = _colPotentials[col - 1].ToString().PadLeft(offset) + ' ';
+        for (int row = 1; row < rows; row++) {
+            for (int col = 1; col < cols; col++) {
+                var value = this[contentLayer, row - 1, col - 1];
+                extendedTable[row, col] = $"{(double.IsNaN(value) ? "-" : Globals.Round(value))}".PadLeft(offset) + ' ';
             }
         }
 
