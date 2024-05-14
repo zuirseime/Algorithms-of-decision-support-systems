@@ -29,7 +29,7 @@ public class TP {
         return (_feasiblePlan, _optimalPlan);
     }
 
-    protected static double[] StringToArray(string text) 
+    protected static double[] StringToArray(string text)
         => text.Split().Select(double.Parse).ToArray();
 
     protected void LogTable(int contentLayer, int headerLayer) {

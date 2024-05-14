@@ -81,8 +81,8 @@ public class OptimalPlan : Plan {
     private void DecreaseBadCells() {
         if (_increasedCells.Count == 0) return;
 
-        for (Point cell = _increasedCells.Dequeue(); 
-            _increasedCells.Count > 0; 
+        for (Point cell = _increasedCells.Dequeue();
+            _increasedCells.Count > 0;
             cell = _increasedCells.Dequeue()) {
             _matrix[0, cell.Y, cell.X] -= double.Epsilon;
         }

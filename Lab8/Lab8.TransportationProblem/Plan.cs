@@ -4,7 +4,7 @@ namespace Lab8.TransportationProblem;
 public abstract class Plan {
     protected Matrix _matrix;
 
-    internal double Solution { 
+    internal double Solution {
         get {
             double sum = 0;
             for (int r = 0; r < _matrix.Height; r++) {
@@ -23,5 +23,9 @@ public abstract class Plan {
 
     protected void LogTable(int contentLayer, int headerLayer) {
         Log.WriteLine(_matrix.ToString(contentLayer, headerLayer));
+    }
+
+    public override string ToString() {
+        return Matrix.ToString(full: false);
     }
 }

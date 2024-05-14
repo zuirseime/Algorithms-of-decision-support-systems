@@ -32,22 +32,22 @@ internal class LoopBuilder {
 
         if (row) {
             index = MoveVertical(current.X, 0, r => r < current.Y, r => ++r);
-            if (index < 0) 
+            if (index < 0)
                 index = MoveVertical(
-                    current.X, 
-                    _matrix.GetLength(0) - 1, 
-                    r => r > current.Y, 
+                    current.X,
+                    _matrix.GetLength(0) - 1,
+                    r => r > current.Y,
                     r => --r
                 );
 
             next = new Point(current.X, index);
         } else {
             index = MoveHorizontal(current.Y, 0, c => c < current.X, c => ++c);
-            if (index < 0) 
+            if (index < 0)
                 index = MoveHorizontal(
-                    current.Y, 
-                    _matrix.GetLength(1) - 1, 
-                    c => c > current.X, 
+                    current.Y,
+                    _matrix.GetLength(1) - 1,
+                    c => c > current.X,
                     col => --col
                 );
 

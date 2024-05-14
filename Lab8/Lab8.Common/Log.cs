@@ -6,7 +6,7 @@ public static class Log {
         public string? Data { get; set; } = data;
         public bool Important { get; set; } = important;
 
-        public override readonly string ToString() => $"{this.Data}";
+        public override readonly string ToString() => $"{Data}";
     }
 
     private static LinkedList<Item> _data = null!;
