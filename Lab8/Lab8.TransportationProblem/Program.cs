@@ -1,17 +1,20 @@
-﻿namespace Lab8.TransportationProblem;
+﻿using Lab8.Common;
+
+namespace Lab8.TransportationProblem;
 internal class Program {
     public static void Main(string[] args) {
-        TP nwc = new NorthWestCorner();
+        Log.Initialize();
+        TP nwc = new();
 
         string matrix = """
-            6 3 2
-            2 1 5
-            3 4 1
+            3 1 2 2
+            1 5 3 5
+            5 8 6 3
             """;
 
-        string po = "30 20 50";
-        string pn = "10 65 25";
+        string suppliers = "20 45 5";
+        string customers = "15 20 10 30";
 
-        nwc.Run(matrix, pn, po);
+        nwc.Run(matrix, customers, suppliers);
     }
 }

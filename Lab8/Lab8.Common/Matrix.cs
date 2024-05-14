@@ -1,18 +1,18 @@
 ﻿namespace Lab8.Common;
 
-public struct Matrix {
+public struct Matrix : ICloneable {
     public readonly int Width => _plan.GetLength(1);
     public readonly int Height => _plan.GetLength(0);
 
-    private double[] _baseRows = null!;
-    private double[] _rows = null!;
+    private double[] _suppliers = null!;
+    private double[] _supplies = null!;
     private double[] _rowPotentials = null!;
-    private readonly double[][] rowLayers => [_baseRows, _rows, _rowPotentials];
+    private readonly double[][] rowLayers => [_suppliers, _supplies, _rowPotentials];
 
-    private double[] _baseCols = null!;
-    private double[] _cols = null!;
+    private double[] _customers = null!;
+    private double[] _orders = null!;
     private double[] _colPotentials = null!;
-    private readonly double[][] colLayers => [_baseCols, _cols, _colPotentials];
+    private readonly double[][] colLayers => [_customers, _orders, _colPotentials];
 
     private readonly Dictionary<char, double[][]> axes => new() {
         { 'y', rowLayers },
@@ -54,24 +54,25 @@ public struct Matrix {
                 }
             }
 
-            return maxLength;
+            return maxLength + 3;
         }
     }
 
-    public Matrix(double[,] data) {
-        _costs = (double[,])data.Clone();
-        _plan = new double[data.GetLength(0), data.GetLength(1)];
-        //FillIndirectCosts(data.GetLength(0), data.GetLength(1));
+    public Matrix(double[,] data) : this(new double[data.GetLength(0), data.GetLength(1)], (double[,])data.Clone()) { }
+
+    private Matrix(double[,] plan, double[,] costs) {
+        _plan = (double[,])plan.Clone();
+        _costs = (double[,])costs.Clone();
     }
 
-    public void FillIndirectCosts(int height, int width) {
-        var indirectCosts = Enumerable.Repeat(Enumerable.Repeat(double.NaN, height).ToArray(), width).ToArray();
+    public void FillIndirectCosts() {
+        var indirectCosts = Enumerable.Repeat(Enumerable.Repeat(double.NaN, Width).ToArray(), Height).ToArray();
         _indirectCosts = Convert(indirectCosts);
     }
 
-    public void FillPotentialsWithNaN(int rows, int cols) {
-        _rowPotentials = Enumerable.Repeat(double.NaN, rows).ToArray();
-        _colPotentials = Enumerable.Repeat(double.NaN, cols).ToArray();
+    public void FillPotentialsWithNaN() {
+        _rowPotentials = Enumerable.Repeat(double.NaN, Height).ToArray();
+        _colPotentials = Enumerable.Repeat(double.NaN, Width).ToArray();
     }
 
     public void Load(double[] rows, double[] cols) {
@@ -80,13 +81,60 @@ public struct Matrix {
         if (cols.Length != Width)
             throw GetSizeException(nameof(cols));
 
-        _rows = (double[])rows.Clone();
-        _cols = (double[])cols.Clone();
+        _supplies = (double[])rows.Clone();
+        _orders = (double[])cols.Clone();
 
-        //FillPotentialsWithNaN(rows.Length, cols.Length);s
+        _suppliers = (double[])rows.Clone();
+        _customers = (double[])cols.Clone();
 
-        _baseRows = (double[])rows.Clone();
-        _baseCols = (double[])cols.Clone();
+        if (!IsClosed()) Close();
+    }
+
+    private bool IsClosed() => _suppliers.Sum() == _customers.Sum();
+
+    private void Close() {
+        double supplies = _suppliers.Sum();
+        double orders = _customers.Sum();
+        double delta = Math.Abs(supplies - orders);
+
+        if (_suppliers.Sum() < _customers.Sum()) {
+            _suppliers = ExtendAxis(_suppliers, delta);
+            _supplies = ExtendAxis(_supplies, delta);
+            _costs = ExtendMatrix(_costs, true);
+            _plan = ExtendMatrix(_plan, true);
+        } else {
+            _customers = ExtendAxis(_customers, delta);
+            _orders = ExtendAxis(_orders, delta);
+            _costs = ExtendMatrix(_costs, false);
+            _plan = ExtendMatrix(_plan, false);
+        }
+    }
+
+    private static double[] ExtendAxis(double[] axis, double value) {
+        double[] result = new double[axis.Length + 1];
+        for (int i = 0; i < axis.Length; i++) result[i] = axis[i];
+        result[^1] = value;
+        return result;
+    }
+
+    private static double[,] ExtendMatrix(double[,] matrix, bool extendRows) {
+        double[,] result;
+        if (extendRows) {
+            result = new double[matrix.GetLength(0) + 1, matrix.GetLength(1)];
+            CopyMatrix(matrix, result);
+        } else {
+            result = new double[matrix.GetLength(0), matrix.GetLength(1) + 1];
+            CopyMatrix(matrix, result);
+        }
+        return result;
+    }
+
+    private static void CopyMatrix(double[,] source, double[,] destination) {
+        for (int i = 0; i < source.GetLength(0); i++) {
+            for (int j = 0; j < source.GetLength(1); j++) {
+                destination[i, j] = source[i, j];
+            }
+        }
     }
 
     private static double[,] Convert(double[][] data) {
@@ -154,8 +202,7 @@ public struct Matrix {
 
         string[,] extendedTable = new string[rows, cols];
 
-        int offset = _baseCols.Max(h => h.ToString().Length) * 4 + 3;
-        int leftEdge = _baseRows.Max(h => h.ToString().Length);
+        int leftEdge = _suppliers.Max(h => h.ToString().Length);
 
         extendedTable[0, 0] = "".PadLeft(leftEdge) + ' ';
 
@@ -164,16 +211,28 @@ public struct Matrix {
         }
 
         for (int col = 1; col < cols; col++) {
-            extendedTable[0, col] = this['x', headerLayer, col - 1].ToString().PadLeft(offset) + ' ';
+            extendedTable[0, col] = this['x', headerLayer, col - 1].ToString().PadLeft(Offset) + ' ';
         }
 
         for (int row = 1; row < rows; row++) {
             for (int col = 1; col < cols; col++) {
                 var value = this[contentLayer, row - 1, col - 1];
-                extendedTable[row, col] = $"{(double.IsNaN(value) ? "-" : Globals.Round(value))}".PadLeft(offset) + ' ';
+                extendedTable[row, col] = $"{(double.IsNaN(value) ? "-" : Globals.Round(value))}".PadLeft(Offset) + ' ';
             }
         }
 
         return extendedTable;
+    }
+
+    public object Clone() {
+        double[,] plan = (double[,])this[0].Clone();
+        double[,] costs = (double[,])this[1].Clone();
+        double[] rows = (double[])this['y', 0].Clone();
+        double[] cols = (double[])this['x', 0].Clone();
+
+        Matrix matrix = new(plan, costs);
+        matrix.Load(rows, cols);
+
+        return matrix;
     }
 }
