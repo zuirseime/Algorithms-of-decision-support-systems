@@ -21,7 +21,7 @@ public struct Matrix : ICloneable {
 
     private double[,] _plan;
     private double[,] _costs;
-    private double[,] _indirectCosts;
+    private double[,] _indirectCosts = null!;
     private readonly double[][,] layers => [_plan, _costs, _indirectCosts];
 
     public double[] this[char axis, int layer] {
