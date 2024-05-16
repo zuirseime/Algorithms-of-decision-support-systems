@@ -1,7 +1,7 @@
 ﻿using Lab8.Common;
 
 namespace Lab8.SimplexAlgorithm.Models;
-public struct Tableau(double[,] data, string[] rows, string[] columns, char[] rowVars, char[] colVars, int order) {
+public struct Tableau(double[,] data, string[] rows, string[] columns, char[] rowVars, char[] colVars, int order) : ICloneable {
     public char[] RowVars { get; private set; } = rowVars;
     public char[] ColVars { get; private set; } = colVars;
 
@@ -94,7 +94,9 @@ public struct Tableau(double[,] data, string[] rows, string[] columns, char[] ro
 
         for (int row = 1; row < rows; row++) {
             for (int col = 1; col < cols; col++) {
-                extendedTable[row, col] = $"{Globals.Round(Data[row - 1, col - 1])}".PadLeft(Offset) + ' ';
+                if (Globals.Round(Data[row - 1, col - 1]) != 0) {
+                    extendedTable[row, col] = $"{Globals.Round(Data[row - 1, col - 1])}".PadLeft(Offset) + ' ';
+                } else extendedTable[row, col] = "0".PadLeft(Offset) + ' ';
             }
         }
 
@@ -121,5 +123,9 @@ public struct Tableau(double[,] data, string[] rows, string[] columns, char[] ro
         }
 
         return result;
+    }
+
+    public object Clone() {
+        return new Tableau((double[,])Data!.Clone(), (string[])Rows.Clone(), (string[])Columns.Clone(), Order);
     }
 }

@@ -6,7 +6,8 @@ public class Solution : Module {
     protected Tableau _tableau;
 
     public Roots Roots { get; protected set; }
-    public double Value => _tableau.Data![_tableau.Height - 1, _tableau.Width - 1];
+    public double Value => _tableau.Data![_tableau.Height - 1, _tableau.Width - 1] * (IsMax ? 1 : -1);
+    internal static bool IsMax { get; set; }
 
     public override string ToString() {
         int rows = Globals.MatrixSize.Height;

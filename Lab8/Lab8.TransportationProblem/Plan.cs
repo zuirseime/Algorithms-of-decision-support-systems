@@ -4,7 +4,7 @@ namespace Lab8.TransportationProblem;
 public abstract class Plan {
     protected Matrix _matrix;
 
-    internal double Solution {
+    public double Solution {
         get {
             double sum = 0;
             for (int r = 0; r < _matrix.Height; r++) {
@@ -15,7 +15,7 @@ public abstract class Plan {
             return sum;
         }
     }
-    internal Matrix Matrix => _matrix;
+    public Matrix Matrix => _matrix;
 
     internal virtual void Find(Matrix matrix) => _matrix = matrix;
 

@@ -13,7 +13,7 @@ public class BasicFeasibleSolution : Solution {
             if (negativeRow < 0) {
                 Log.WriteLine("\nThe basic feasible solution has been found:", true);
                 Roots = Designer.LogRoots(tableau);
-                _tableau = tableau;
+                _tableau = (Tableau)tableau.Clone();
                 return tableau;
             }
 

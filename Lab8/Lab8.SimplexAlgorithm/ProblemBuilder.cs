@@ -49,7 +49,7 @@ public class ProblemBuilder {
         for (int col = 0; col < cols; col++) {
             double[] constCoeffs = new double[rows * cols];
             for (int row = 0; row < rows; row++) {
-                constCoeffs[row * rows + col] = 1;
+                constCoeffs[row * cols + col] = 1;
             }
             Constraint constraint = new(constCoeffs, _customers[col], Relation.GreaterOrEqual);
             constraints.Add(constraint);

@@ -84,7 +84,8 @@ public class SA {
             _tableau = _zeroRows.Remove(_tableau);
 
         _tableau = _basicFeasibleSolution.Find(_tableau);
-        Designer.ShowSolution(_basicFeasibleSolution.Value * (max ? 1 : -1), max);
+        Solution.IsMax = max;
+        Designer.ShowSolution(_basicFeasibleSolution.Value, max);
 
         _tableau = max ? _optimalSolution.Max(_tableau) : _optimalSolution.Min(_tableau);
         Designer.ShowSolution(_optimalSolution.Value, max);

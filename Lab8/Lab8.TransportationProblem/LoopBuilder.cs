@@ -4,6 +4,7 @@ namespace Lab8.TransportationProblem;
 internal class LoopBuilder {
     private readonly double[,] _matrix;
     private readonly List<Point> _loop = [];
+    private Point _start;
 
     public Point this[int i] {
         get => _loop[i];
@@ -11,19 +12,20 @@ internal class LoopBuilder {
     }
 
     public LoopBuilder(Point start, double[,] matrix) {
+        _start = start;
         _matrix = matrix;
 
-        _loop.Add(start);
+        _loop.Add(_start);
 
-        var current = start;
+        var current = _start;
         bool row = true;
 
-        while (true) {
+        do {
             current = Next(current, row);
-            if (current == start) break;
+            if (current == _start) break;
             _loop.Add(current);
             row = !row;
-        }
+        } while (current.Y != _start.Y);
     }
 
     private Point Next(Point current, bool row) {
@@ -45,11 +47,11 @@ internal class LoopBuilder {
             index = MoveHorizontal(current.Y, 0, c => c < current.X, c => ++c);
             if (index < 0)
                 index = MoveHorizontal(
-                    current.Y,
-                    _matrix.GetLength(1) - 1,
-                    c => c > current.X,
-                    col => --col
-                );
+                        current.Y,
+                        _matrix.GetLength(1) - 1,
+                        c => c > current.X,
+                        col => --col
+                    );
 
             next = new Point(index, current.Y);
         }

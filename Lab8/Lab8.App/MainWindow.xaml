@@ -5,8 +5,92 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Lab8.App"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="MainWindow" Height="450" Width="800"
+        FontFamily="Consolas" FontSize="14" Closing="OnClosing">
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
 
+        <Grid Margin="5" Grid.Row="0" Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="Shipment costs" />
+            <TextBox x:Name="_matrix" Grid.Row="1" AcceptsReturn="True" />
+        </Grid>
+
+        <Grid Margin="5" Grid.Row="0" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0">
+                <TextBlock Text="Supplies" />
+                <TextBox x:Name="_supplies" />
+            </StackPanel>
+
+            <StackPanel Grid.Row="1" Margin="0 5">
+                <TextBlock Text="Orders" />
+                <TextBox x:Name="_orders" />
+            </StackPanel>
+
+            <Button Grid.Row="2" Content="Find an optimal plan" Click="FindOptimalPlan" Padding="5" Margin="0 5" />
+
+            <StackPanel Grid.Row="3" Margin="0 2">
+                <RadioButton x:Name="_corner" GroupName="methods" Content="North-West Corner" Margin="0 3" />
+                <RadioButton x:Name="_simplexMethod" GroupName="methods" Content="Simplex Method" Margin="0 3" />
+            </StackPanel>
+        </Grid>
+
+        <Grid Margin="5" Grid.Row="1" Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="A feasible plan" Grid.Row="0" />
+            <TextBox x:Name="_feasiblePlan" AcceptsReturn="True" IsReadOnly="True" Grid.Row="1" />
+            <Grid Grid.Row="2" Margin="0 5 0 0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                
+                <TextBlock Text="Cost: " Grid.Column="0" />
+                <TextBox x:Name="_feasibleCost" IsReadOnly="True" Grid.Column="1" />
+            </Grid>
+        </Grid>
+
+        <Grid Margin="5" Grid.Row="1" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="An optimal plan" Grid.Row="0" />
+            <TextBox x:Name="_optimalPlan" AcceptsReturn="True" IsReadOnly="True" Grid.Row="1" />
+            <Grid Grid.Row="2" Margin="0 5 0 0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="Cost: " Grid.Column="0" />
+                <TextBox x:Name="_optimalCost" IsReadOnly="True" Grid.Column="1" />
+            </Grid>
+        </Grid>
     </Grid>
 </Window>

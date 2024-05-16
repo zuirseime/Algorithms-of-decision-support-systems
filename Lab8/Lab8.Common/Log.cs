@@ -12,7 +12,10 @@ public static class Log {
     private static LinkedList<Item> _data = null!;
     private static string _last = string.Empty;
 
-    public static void Initialize() => _data = [];
+    public static void Initialize() {
+        _data = [];
+        Console.WriteLine("\n\n");
+    }
 
     public static void WriteLine() => Log.WriteLine("\n");
 

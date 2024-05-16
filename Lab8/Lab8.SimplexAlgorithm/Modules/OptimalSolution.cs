@@ -12,7 +12,7 @@ public class OptimalSolution : Solution {
             if (pivotCol < 0) {
                 Log.WriteLine("The optimal solution has been found:", true);
                 Roots = Designer.LogRoots(tableau);
-                _tableau = tableau;
+                _tableau = (Tableau)tableau.Clone();
                 return tableau;
             }
 
@@ -29,13 +29,9 @@ public class OptimalSolution : Solution {
     internal Tableau Min(Tableau tableau) {
         if (tableau.Data is null) return new Tableau();
 
-        int rows = tableau.Height;
-        int cols = tableau.Width;
-
         _tableau = Max(tableau);
         if (_tableau.Data is null) return new Tableau();
 
-        _tableau.Data[rows - 1, cols - 1] *= -1;
         return _tableau;
     }
 }
