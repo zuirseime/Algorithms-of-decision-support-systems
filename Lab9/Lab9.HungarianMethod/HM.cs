@@ -1,11 +1,14 @@
+using System.Linq;
 
 namespace Lab9.HungarianMethod;
 
 public class HM {
     private Matrix _matrix;
+    private bool _full = false;
 
-    public Matrix Run(string matrix) {
+    public (Matrix, double) Run(string matrix) {
         _ = Matrix.TryParse(matrix, out _matrix);
+        Matrix defaultMatrix = (Matrix)_matrix.Clone();
 
         Console.WriteLine("A cost matrix:");
         Console.WriteLine(_matrix);
@@ -14,14 +17,91 @@ public class HM {
         Decrease(false, _matrix.Width, _matrix.Height);
 
         while (true) {
-            CullOffLines();
+            if (CullOffLines()) break;
 
-            // TODO: Change true
-            if (true) break;
+            double min = _matrix.Data.Min(i => i.State == State.None).Value;
+            ModifyMatrix(min);
+            _matrix.RestoreStates();
+
+            Console.WriteLine(_matrix);
         }
 
-        return _matrix;
+        BuildAssignments();
+
+        return (_matrix, GetCost(defaultMatrix));
     }
+
+    private double GetCost(Matrix matrix) {
+        double cost = 0;
+        List<double> additives = [];
+
+        for (int row = 0; row < _matrix.Height; row++) {
+            for (int col = 0; col < _matrix.Width; col++) {
+                if (_matrix.Data[row, col].Value == 1) {
+                    var value = matrix.Data[row, col].Value;
+                    additives.Add(value);
+                    cost += value;
+                }
+            }
+        }
+
+        Console.WriteLine($"Cost = {string.Join(" + ", additives)} = {cost}");
+        return cost;
+    }
+
+    private void BuildAssignments() {
+        _matrix.RestoreStates();
+
+        while (_matrix.Data.Any(i => i.Value == 0 && i.State == State.None)) {
+            GetAssignmentMatrix();
+        }
+
+        GetAssignments();
+        Console.WriteLine(_matrix);
+    }
+
+    private void GetAssignments() {
+        for (int row = 0; row < _matrix.Height; row++) {
+            for (int col = 0; col < _matrix.Width; col++) {
+                if (_matrix[row, col].State == State.Picked)
+                    _matrix.Data[row, col].Value = 1;
+                else _matrix.Data[row, col].Value = 0;
+            }
+        }
+    }
+
+    private void GetAssignmentMatrix() {
+        for (int i = 0; i < _matrix.Height; i++) {
+            int zeros = _matrix.Data.CountInRow(z => z.Value == 0 && z.State != State.Erased, i);
+            if (zeros != 1) continue;
+            EraseExtraZeros(i);
+        }
+    }
+
+    private void EraseExtraZeros(int i) {
+        for (int col = 0; col < _matrix.Width; col++) {
+            if (_matrix[i, col].Value != 0 || _matrix[i, col].State == State.Erased) continue;
+
+            _matrix.Data[i, col].State = State.Picked;
+            for (int row = 0; row < _matrix.Height; row++) {
+                if (row == i || _matrix[row, col].Value != 0) continue;
+
+                _matrix.Data[row, col].State = State.Erased;
+            }
+        }
+    }
+
+    private void ModifyMatrix(double min) {
+        for (int row = 0; row < _matrix.Height; row++) {
+            for (int col = 0; col < _matrix.Width; col++) {
+                if (_matrix[row, col].State == State.None)
+                    _matrix.Data[row, col].Value -= min;
+                else if (_matrix[row, col].State == State.Overlaped)
+                    _matrix.Data[row, col].Value += min;
+            }
+        }
+    }
+
     private void Decrease(bool byRow, int outerCount, int innerCount) {
         string type = byRow ? "row" : "column";
 
@@ -55,59 +135,85 @@ public class HM {
         }
     }
 
-    private void CullOffLines() {
+    private bool CullOffLines() {
         int rows = _matrix.Height;
         int cols = _matrix.Width;
 
+        bool col = true;
+        int count = 0;
         while (true) {
-            CullOffHorizontal(rows, cols);
-            CullOffVertical(rows, cols);
+            count++;
 
-            if (!_matrix.Data.Contains(new MatrixItem(0)))
+            if (col) CullOffVertical(rows, cols);
+            else CullOffHorizontal(rows, cols);
+
+            if (!_matrix.Data.Any(i => i.Value == 0 && i.State == State.None))
                 break;
+
+            col = !col;
         }
 
         Console.WriteLine(_matrix.ToString(true));
+
+        return count == _matrix.Width;
     }
 
     private void CullOffHorizontal(int rows, int cols) {
-        double min = double.MaxValue;
-        int rMin = 0;
+        double max = double.MinValue;
+        int rMax = 0;
         for (int row = 0; row < rows; row++) {
-            var value = _matrix.Data.CountInRow(new MatrixItem(0), row);
-            if (min > value) {
-                min = value;
-                rMin = row;
+            var value = _matrix.Data.CountInRow(i => i.Value == 0 && i.State == State.None, row);
+            if (max < value) {
+                max = value;
+                rMax = row;
             }
         }
 
+        bool hasZero = false;
         for (int col = 0; col < cols; col++) {
-            if (_matrix[rMin, col] != 0) {
-                _matrix._data[rMin, col].State =
-                    _matrix._data[rMin, col].State != State.Vertical
+            if (_matrix[rMax, col].Value == 0 && _matrix[rMax, col].State == State.None && !hasZero) {
+                _matrix.Data[rMax, col].State = State.Zero;
+                hasZero = true;
+                continue;
+            }
+
+            if (_matrix[rMax, col].State != State.Zero) {
+                _matrix.Data[rMax, col].State =
+                    _matrix[rMax, col].State != State.Vertical
                     ? State.Horizontal : State.Overlaped;
-            } else _matrix._data[rMin, col].State = State.Zero;
+            }
         }
+
+        if (_full) Console.WriteLine(_matrix.ToString(true));
     }
 
     private void CullOffVertical(int rows, int cols) {
-        double min = double.MaxValue;
-        int cMin = 0;
+        double max = double.MinValue;
+        int cMax = 0;
         for (int col = 0; col < cols; col++) {
-            var value = _matrix.Data.CountInColumn(new MatrixItem(0), col);
-            if (min > value) {
-                min = value;
-                cMin = col;
+            var value = _matrix.Data.CountInColumn(i => i.Value == 0 && i.State == State.None, col);
+            if (max < value) {
+                max = value;
+                cMax = col;
             }
         }
 
+        bool hasZero = false;
         for (int row = 0; row < rows; row++) {
-            if (_matrix[row, cMin] != 0) {
-                _matrix._data[row, cMin].State =
-                    _matrix._data[row, cMin].State != State.Horizontal
+            if (_matrix[row, cMax].Value == 0 && _matrix[row, cMax].State == State.None && !hasZero) {
+                _matrix.Data[row, cMax].State = State.Zero;
+                hasZero = true;
+                continue;
+            }
+
+            if (_matrix[row, cMax].State != State.Zero) {
+                _matrix.Data[row, cMax].State =
+                    _matrix[row, cMax].State != State.Horizontal
                     ? State.Vertical : State.Overlaped;
-            } else _matrix._data[row, cMin].State = State.Zero;
+            }
         }
+
+        if (_full) Console.WriteLine(_matrix.ToString(true));
     }
 }
 
@@ -125,8 +231,20 @@ public static class ArrayExtensions {
     public static int CountInColumn<T>(this T[,] matrix, T value, int col) where T : IComparable =>
         Enumerable.Range(0, matrix.GetLength(0)).Count(row => matrix[row, col].CompareTo(value) == 0);
 
+    public static int CountInRow<T>(this T[,] matrix, Func<T, bool> predicate, int row) where T : IComparable =>
+        Enumerable.Range(0, matrix.GetLength(1)).Count(col => predicate(matrix[row, col]));
+    public static int CountInColumn<T>(this T[,] matrix, Func<T, bool> predicate, int col) where T : IComparable =>
+        Enumerable.Range(0, matrix.GetLength(0)).Count(row => predicate(matrix[row, col]));
+
     public static bool Contains<T>(this T[,] matrix, T value) where T : IComparable =>
         Enumerable.Range(0, matrix.GetLength(0)).Any(r => 
             Enumerable.Range(0, matrix.GetLength(1)).Any(c => 
                 matrix[r, c].CompareTo(value) == 0));
+
+    public static bool Any<T>(this T[,] matrix, Func<T, bool> predicate) =>
+        matrix.Cast<T>().Any(predicate);
+
+    public static T Min<T>(this T[,] matrix) => matrix.Cast<T>().Min()!;
+    public static T Min<T>(this T[,] matrix, Func<T, bool> predicate) => 
+        matrix.Cast<T>().Where(item => predicate(item)).Min()!;
 }

@@ -1,44 +1,42 @@
 ﻿namespace Lab9.HungarianMethod;
-public struct Matrix {
-    private double[,] _data;
-    private State[,] _mask;
+public struct Matrix : ICloneable {
+    public readonly int Height => Data.GetLength(0);
+    public readonly int Width => Data.GetLength(1);
 
+    public MatrixItem[,] Data { get; set; }
 
-    public readonly int Height => _data.GetLength(0);
-    public readonly int Width => _data.GetLength(1);
-
-    public bool[] Rows { get; set; }
-    public bool[] Columns { get; set; }
-
-    public double this[int i, int j] {
-        get => _data[i, j];
-        set => _data[i, j] = value;
+    public MatrixItem this[int i, int j] {
+        get => Data[i, j];
+        set => Data[i, j] = value;
     }
 
-    private int Offset {
-        get {
-            int maxLength = int.MinValue;
+    private int Offset { get; set; }
 
-            for (int i = 0; i < _data.GetLength(0); i++) {
-                for (int j = 0; j < _data.GetLength(1); j++) {
-                    var value = Globals.Round(this[i, j]);
-                    if ($"{value}".Length > maxLength)
-                        maxLength = $"{value}".Length;
-                }
+    public Matrix(MatrixItem[,] data) {
+        Data = data;
+        SetOffset();
+    }
+
+    private void SetOffset() {
+        int maxLength = int.MinValue;
+
+        for (int i = 0; i < Data.GetLength(0); i++) {
+            for (int j = 0; j < Data.GetLength(1); j++) {
+                var value = Globals.Round(this[i, j].Value);
+                if ($"{value}".Length > maxLength)
+                    maxLength = $"{value}".Length;
             }
-
-            return maxLength;
         }
+
+        Offset = maxLength;
     }
 
-    public Matrix(double[,] data) {
-        _data = data;
-
-        Rows = new bool[_data.GetLength(0)];
-        Columns = new bool[_data.GetLength(1)];
-
-        Array.Fill(Rows, false);
-        Array.Fill(Columns, false);
+    public void RestoreStates() {
+        for (int row = 0; row < Height; row++) {
+            for (int col = 0; col < Width; col++) {
+                Data[row, col].State = State.None;
+            }
+        }
     }
 
     public static Matrix Parse(string input) {
@@ -52,7 +50,7 @@ public struct Matrix {
         int numRows = rows.Length;
         int numCols = rows[0].Split(delimiters, StringSplitOptions.RemoveEmptyEntries).Length;
 
-        double[,] data = new double[numRows, numCols];
+        MatrixItem[,] data = new MatrixItem[numRows, numCols];
         for (int row = 0; row < numRows; row++) {
             string[] elements = rows[row].Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
 
@@ -60,7 +58,8 @@ public struct Matrix {
                 throw new ArgumentException($"Row {row + 1} contains a differnet number of elements.");
 
             for (int col = 0; col < numCols; col++) {
-                _ = double.TryParse(elements[col], out data[row, col]);
+                _ = double.TryParse(elements[col], out data[row, col].Value);
+                data[row, col].State = State.None;
             }
         }
 
@@ -68,7 +67,7 @@ public struct Matrix {
     }
 
     public static bool TryParse(string str, out Matrix matrix) {
-        matrix = new Matrix(new double[0, 0]);
+        matrix = new Matrix(new MatrixItem[0, 0]);
         bool valid = false;
 
         try {
@@ -88,13 +87,15 @@ public struct Matrix {
     public string ToString(bool state) {
         string result = string.Empty;
 
-        for (int row = 0; row < _data.GetLength(0); row++) {
-            for (int col = 0; col < _data.GetLength(1); col++) {
-                result += $"{Globals.Round(_data[row, col])}".PadLeft(Offset) + " ";
+        for (int row = 0; row < Data.GetLength(0); row++) {
+            for (int col = 0; col < Data.GetLength(1); col++) {
+                result += $"{Data[row, col].ToString(state)}".PadLeft(Offset) + " ";
             }
             result += '\n';
         }
 
         return result;
     }
+
+    public object Clone() => new Matrix((MatrixItem[,])Data.Clone());
 }
