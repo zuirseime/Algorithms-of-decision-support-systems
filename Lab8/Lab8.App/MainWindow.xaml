@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Lab8.App"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
+        Title="Shipment" Height="450" Width="800"
         FontFamily="Consolas" FontSize="14" Closing="OnClosing">
     <Grid Margin="5">
         <Grid.RowDefinitions>

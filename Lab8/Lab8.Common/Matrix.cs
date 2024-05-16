@@ -60,12 +60,10 @@ public struct Matrix : ICloneable {
 
     public Matrix(double[,] data) : this(new double[data.GetLength(0), data.GetLength(1)], (double[,])data.Clone()) { }
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     private Matrix(double[,] plan, double[,] costs) {
         _plan = (double[,])plan.Clone();
         _costs = (double[,])costs.Clone();
     }
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
     public void FillIndirectCosts() {
         var indirectCosts = Enumerable.Repeat(Enumerable.Repeat(double.NaN, Width).ToArray(), Height).ToArray();

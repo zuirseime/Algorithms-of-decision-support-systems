@@ -10,7 +10,7 @@ public struct Tableau(double[,] data, string[] rows, string[] columns, char[] ro
 
     public double[,]? Data { get; set; } = data;
 
-    public readonly int Offset => ColVars.Length * 4 + 3;
+    public readonly int Offset => ColVars.Length * 2 + 3;
     public readonly int Order => order;
     public readonly int Width => Data is null ? 0 : Data.GetLength(1);
     public readonly int Height => Data is null ? 0 : Data.GetLength(0);
