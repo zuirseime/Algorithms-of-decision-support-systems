@@ -5,8 +5,60 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Lab9.App"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="Hungarian Algorithm" Height="450" Width="800"
+        FontFamily="Consolas" FontSize="14">
+    <Grid Margin="5">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
+        <Grid Grid.Row="0" Grid.Column="0" Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="Cost matrix" Grid.Row="0" />
+            <TextBox x:Name="_costs" Grid.Row="1" AcceptsReturn="True" />
+        </Grid>
+
+        <Grid Grid.Row="0" Grid.Column="1" Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="Assignemnt matrix" Grid.Row="0" />
+            <TextBox x:Name="_assignments" Grid.Row="1" AcceptsReturn="True" IsReadOnly="True" />
+        </Grid>
+
+        <Button Content="Find assignment matrix" Click="FindAssignmentMatrix" Grid.Row="1" Grid.Column="0" Margin="5" Padding="5" />
+
+        <Grid Grid.Row="1" Grid.Column="1" Margin="5" VerticalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Text="Cost: " Grid.Column="0" />
+            <TextBox x:Name="_cost" Grid.Column="1" IsReadOnly="True" />
+        </Grid>
+
+        <RadioButton x:Name="_hungarian" GroupName="algorithms" 
+                     Content="Hungarian algorithm"
+                     Grid.Row="2" Grid.Column="0" 
+                     VerticalAlignment="Center" HorizontalAlignment="Right"
+                     Margin="5" />
+
+        <RadioButton x:Name="_simplex" GroupName="algorithms" 
+             Content="Simplex algorithm"
+             Grid.Row="2" Grid.Column="1" 
+             VerticalAlignment="Center" Margin="5" />
     </Grid>
 </Window>
