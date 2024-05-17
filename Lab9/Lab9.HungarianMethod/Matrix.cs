@@ -1,4 +1,6 @@
-﻿namespace Lab9.HungarianMethod;
+﻿using Lab9.Common;
+
+namespace Lab9.HungarianMethod;
 public struct Matrix : ICloneable {
     public readonly int Height => Data.GetLength(0);
     public readonly int Width => Data.GetLength(1);
