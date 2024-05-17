@@ -17,7 +17,7 @@ public class HM {
         Decrease(false, _matrix.Width, _matrix.Height);
 
         while (true) {
-            if (CullOffLines()) {
+            if (CullOff()) {
                 Log.WriteLine("The matrix of optimal assignments is found");
                 break;
             }
@@ -34,8 +34,6 @@ public class HM {
 
         return (_matrix, GetCost(defaultMatrix));
     }
-
-
 
     private void Decrease(bool byRow, int outerCount, int innerCount) {
         string type = byRow ? "row" : "column";
@@ -70,84 +68,7 @@ public class HM {
         }
     }
 
-    private double GetCost(Matrix matrix) {
-        double cost = 0;
-        List<double> additives = [];
-
-        for (int row = 0; row < _matrix.Height; row++) {
-            for (int col = 0; col < _matrix.Width; col++) {
-                if (_matrix.Data[row, col].Value == 1) {
-                    var value = matrix.Data[row, col].Value;
-                    additives.Add(value);
-                    cost += value;
-                }
-            }
-        }
-
-        Log.WriteLine("Total cost of work:");
-        Log.WriteLine($"S = {string.Join(" + ", additives)} = {cost}");
-        return cost;
-    }
-
-    private void BuildAssignments() {
-        _matrix.RestoreStates();
-
-        while (_matrix.Data.Any(i => i.Value == 0 && i.State == State.None)) {
-            GetAssignmentMatrix();
-        }
-
-        GetAssignments();
-
-        Log.WriteLine("The assignment matrix:");
-        Log.WriteLine(_matrix);
-    }
-
-    private void GetAssignments() {
-        for (int row = 0; row < _matrix.Height; row++) {
-            for (int col = 0; col < _matrix.Width; col++) {
-                if (_matrix[row, col].State == State.Picked)
-                    _matrix.Data[row, col].Value = 1;
-                else _matrix.Data[row, col].Value = 0;
-            }
-        }
-    }
-
-    private void GetAssignmentMatrix() {
-        for (int i = 0; i < _matrix.Height; i++) {
-            int zeros = _matrix.Data.CountInRow(z => z.Value == 0 && z.State != State.Erased, i);
-            if (zeros != 1) continue;
-            EraseExtraZeros(i);
-        }
-    }
-
-    private void EraseExtraZeros(int i) {
-        for (int col = 0; col < _matrix.Width; col++) {
-            if (_matrix[i, col].Value != 0 || _matrix[i, col].State == State.Erased) continue;
-
-            _matrix.Data[i, col].State = State.Picked;
-            for (int row = 0; row < _matrix.Height; row++) {
-                if (row == i || _matrix[row, col].Value != 0) continue;
-
-                _matrix.Data[row, col].State = State.Erased;
-            }
-        }
-    }
-
-    private void ModifyMatrix(double min) {
-        for (int row = 0; row < _matrix.Height; row++) {
-            for (int col = 0; col < _matrix.Width; col++) {
-                if (_matrix[row, col].State == State.None)
-                    _matrix.Data[row, col].Value -= min;
-                else if (_matrix[row, col].State == State.Overlaped)
-                    _matrix.Data[row, col].Value += min;
-            }
-        }
-
-        Log.WriteLine("Cost matrix after adding and subtracting 'min' to the corresponding elements:");
-        Log.WriteLine(_matrix);
-    }
-
-    private bool CullOffLines() {
+    private bool CullOff() {
         Log.WriteLine("Search for the matrix of optimal assignments:");
         Log.WriteLine("Cross out all zeros:");
         int rows = _matrix.Height;
@@ -188,8 +109,8 @@ public class HM {
                 continue;
             }
 
-            if (horizontal) CullOffZeros(iMax, i, State.Vertical, State.Horizontal);
-            else CullOffZeros(i, iMax, State.Horizontal, State.Vertical);
+            if (horizontal) CullOffNeighbors(iMax, i, State.Vertical, State.Horizontal);
+            else CullOffNeighbors(i, iMax, State.Horizontal, State.Vertical);
         }
 
         if (_full) Log.WriteLine(_matrix.ToString(true));
@@ -214,10 +135,87 @@ public class HM {
         return iMax;
     }
 
-    private void CullOffZeros(int row, int col, State oldState, State newState) {
+    private void CullOffNeighbors(int row, int col, State oldState, State newState) {
         if (_matrix[row, col].State != State.Zero) {
-            _matrix.Data[row, col].State = _matrix[row, col].State 
+            _matrix.Data[row, col].State = _matrix[row, col].State
                                         != oldState ? newState : State.Overlaped;
         }
+    }
+
+    private void ModifyMatrix(double min) {
+        for (int row = 0; row < _matrix.Height; row++) {
+            for (int col = 0; col < _matrix.Width; col++) {
+                if (_matrix[row, col].State == State.None)
+                    _matrix.Data[row, col].Value -= min;
+                else if (_matrix[row, col].State == State.Overlaped)
+                    _matrix.Data[row, col].Value += min;
+            }
+        }
+
+        Log.WriteLine("Cost matrix after adding and subtracting 'min' to the corresponding elements:");
+        Log.WriteLine(_matrix);
+    }
+
+    private void BuildAssignments() {
+        _matrix.RestoreStates();
+
+        while (_matrix.Data.Any(i => i.Value == 0 && i.State == State.None)) {
+            GetAssignmentMatrix();
+        }
+
+        GetAssignments();
+
+        Log.WriteLine("The assignment matrix:");
+        Log.WriteLine(_matrix);
+    }
+
+    private void GetAssignmentMatrix() {
+        for (int i = 0; i < _matrix.Height; i++) {
+            int zeros = _matrix.Data.CountInRow(z => z.Value == 0 && z.State != State.Erased, i);
+            if (zeros != 1) continue;
+            EraseExtraZeros(i);
+        }
+    }
+
+    private void EraseExtraZeros(int i) {
+        for (int col = 0; col < _matrix.Width; col++) {
+            if (_matrix[i, col].Value != 0 || _matrix[i, col].State == State.Erased) continue;
+
+            _matrix.Data[i, col].State = State.Picked;
+            for (int row = 0; row < _matrix.Height; row++) {
+                if (row == i || _matrix[row, col].Value != 0) continue;
+
+                _matrix.Data[row, col].State = State.Erased;
+            }
+        }
+    }
+
+    private void GetAssignments() {
+        for (int row = 0; row < _matrix.Height; row++) {
+            for (int col = 0; col < _matrix.Width; col++) {
+                if (_matrix[row, col].State == State.Picked)
+                    _matrix.Data[row, col].Value = 1;
+                else _matrix.Data[row, col].Value = 0;
+            }
+        }
+    }
+
+    private double GetCost(Matrix matrix) {
+        double cost = 0;
+        List<double> additives = [];
+
+        for (int row = 0; row < _matrix.Height; row++) {
+            for (int col = 0; col < _matrix.Width; col++) {
+                if (_matrix.Data[row, col].Value == 1) {
+                    var value = matrix.Data[row, col].Value;
+                    additives.Add(value);
+                    cost += value;
+                }
+            }
+        }
+
+        Log.WriteLine("Total cost of work:");
+        Log.WriteLine($"S = {string.Join(" + ", additives)} = {cost}");
+        return cost;
     }
 }
