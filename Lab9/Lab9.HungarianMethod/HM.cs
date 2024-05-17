@@ -17,13 +17,17 @@ public class HM {
         Decrease(false, _matrix.Width, _matrix.Height);
 
         while (true) {
-            if (CullOffLines()) break;
+            if (CullOffLines()) {
+                Log.WriteLine("The matrix of optimal assignments is found");
+                break;
+            }
+
+            Log.WriteLine("The matrix of optimal assignments is not found");
 
             double min = _matrix.Data.Min(i => i.State == State.None).Value;
+            Log.WriteLine($"The minimum among the uncrossed elements: {min}");
             ModifyMatrix(min);
             _matrix.RestoreStates();
-
-            Log.WriteLine(_matrix);
         }
 
         BuildAssignments();
@@ -45,7 +49,8 @@ public class HM {
             }
         }
 
-        Log.WriteLine($"Cost = {string.Join(" + ", additives)} = {cost}");
+        Log.WriteLine("Total cost of work:");
+        Log.WriteLine($"S = {string.Join(" + ", additives)} = {cost}");
         return cost;
     }
 
@@ -57,6 +62,8 @@ public class HM {
         }
 
         GetAssignments();
+
+        Log.WriteLine("The assignment matrix:");
         Log.WriteLine(_matrix);
     }
 
@@ -100,6 +107,9 @@ public class HM {
                     _matrix.Data[row, col].Value += min;
             }
         }
+
+        Log.WriteLine("Cost matrix after adding and subtracting 'min' to the corresponding elements:");
+        Log.WriteLine(_matrix);
     }
 
     private void Decrease(bool byRow, int outerCount, int innerCount) {
@@ -136,6 +146,8 @@ public class HM {
     }
 
     private bool CullOffLines() {
+        Log.WriteLine("Search for the matrix of optimal assignments:");
+        Log.WriteLine("Cross out all zeros:");
         int rows = _matrix.Height;
         int cols = _matrix.Width;
 
@@ -153,7 +165,9 @@ public class HM {
             col = !col;
         }
 
+        Log.WriteLine("Cost matrix after crossing out rows and columns with zeros:");
         Log.WriteLine(_matrix.ToString(true));
+        Log.WriteLine($"Number of job assignments: {count}, total work: {_matrix.Width}");
 
         return count == _matrix.Width;
     }
