@@ -1,4 +1,4 @@
-using System.Linq;
+using Lab9.Common;
 
 namespace Lab9.HungarianMethod;
 
@@ -10,8 +10,8 @@ public class HM {
         _ = Matrix.TryParse(matrix, out _matrix);
         Matrix defaultMatrix = (Matrix)_matrix.Clone();
 
-        Console.WriteLine("A cost matrix:");
-        Console.WriteLine(_matrix);
+        Log.WriteLine("A cost matrix:");
+        Log.WriteLine(_matrix);
         
         Decrease(true, _matrix.Height, _matrix.Width);
         Decrease(false, _matrix.Width, _matrix.Height);
@@ -23,7 +23,7 @@ public class HM {
             ModifyMatrix(min);
             _matrix.RestoreStates();
 
-            Console.WriteLine(_matrix);
+            Log.WriteLine(_matrix);
         }
 
         BuildAssignments();
@@ -45,7 +45,7 @@ public class HM {
             }
         }
 
-        Console.WriteLine($"Cost = {string.Join(" + ", additives)} = {cost}");
+        Log.WriteLine($"Cost = {string.Join(" + ", additives)} = {cost}");
         return cost;
     }
 
@@ -57,7 +57,7 @@ public class HM {
         }
 
         GetAssignments();
-        Console.WriteLine(_matrix);
+        Log.WriteLine(_matrix);
     }
 
     private void GetAssignments() {
@@ -105,13 +105,13 @@ public class HM {
     private void Decrease(bool byRow, int outerCount, int innerCount) {
         string type = byRow ? "row" : "column";
 
-        Console.WriteLine($"Search for the minimum elements in each {type} and subtract it from each element in the {type}:");
+        Log.WriteLine($"Search for the minimum elements in each {type} and subtract it from each element in the {type}:");
         double[] mins = FindMinimums(byRow, outerCount);
 
         Subtract(mins, byRow, outerCount, innerCount);
 
-        Console.WriteLine("\nThe cost matrix after subtracting:");
-        Console.WriteLine(_matrix);
+        Log.WriteLine("\nThe cost matrix after subtracting:");
+        Log.WriteLine(_matrix);
     }
 
     private double[] FindMinimums(bool byRow, int outer) {
@@ -121,7 +121,7 @@ public class HM {
             double min = (byRow ? _matrix.Data.MinInRow(o) : _matrix.Data.MinInColumn(o)).Value;
             result[o] = min;
             string type = byRow ? "row" : "column";
-            Console.WriteLine($"The minimum value in {type} {o + 1} is {min}");
+            Log.WriteLine($"The minimum value in {type} {o + 1} is {min}");
         }
         return result;
     }
@@ -153,7 +153,7 @@ public class HM {
             col = !col;
         }
 
-        Console.WriteLine(_matrix.ToString(true));
+        Log.WriteLine(_matrix.ToString(true));
 
         return count == _matrix.Width;
     }
@@ -184,7 +184,7 @@ public class HM {
             }
         }
 
-        if (_full) Console.WriteLine(_matrix.ToString(true));
+        if (_full) Log.WriteLine(_matrix.ToString(true));
     }
 
     private void CullOffVertical(int rows, int cols) {
@@ -213,38 +213,6 @@ public class HM {
             }
         }
 
-        if (_full) Console.WriteLine(_matrix.ToString(true));
+        if (_full) Log.WriteLine(_matrix.ToString(true));
     }
-}
-
-public static class ArrayExtensions {
-    public static T[] GetRow<T>(this T[,] matrix, int row) =>
-        Enumerable.Range(0, matrix.GetLength(1)).Select(x => matrix[row, x]).ToArray();
-    public static T[] GetColumn<T>(this T[,] matrix, int col) =>
-        Enumerable.Range(0, matrix.GetLength(0)).Select(y => matrix[y, col]).ToArray();
-
-    public static T MinInRow<T>(this T[,] matrix, int row) => GetRow(matrix, row).Min()!;
-    public static T MinInColumn<T>(this T[,] matrix, int col) => GetColumn(matrix, col).Min()!;
-
-    public static int CountInRow<T>(this T[,] matrix, T value, int row) where T : IComparable =>
-        Enumerable.Range(0, matrix.GetLength(1)).Count(col => matrix[row, col].CompareTo(value) == 0);
-    public static int CountInColumn<T>(this T[,] matrix, T value, int col) where T : IComparable =>
-        Enumerable.Range(0, matrix.GetLength(0)).Count(row => matrix[row, col].CompareTo(value) == 0);
-
-    public static int CountInRow<T>(this T[,] matrix, Func<T, bool> predicate, int row) where T : IComparable =>
-        Enumerable.Range(0, matrix.GetLength(1)).Count(col => predicate(matrix[row, col]));
-    public static int CountInColumn<T>(this T[,] matrix, Func<T, bool> predicate, int col) where T : IComparable =>
-        Enumerable.Range(0, matrix.GetLength(0)).Count(row => predicate(matrix[row, col]));
-
-    public static bool Contains<T>(this T[,] matrix, T value) where T : IComparable =>
-        Enumerable.Range(0, matrix.GetLength(0)).Any(r => 
-            Enumerable.Range(0, matrix.GetLength(1)).Any(c => 
-                matrix[r, c].CompareTo(value) == 0));
-
-    public static bool Any<T>(this T[,] matrix, Func<T, bool> predicate) =>
-        matrix.Cast<T>().Any(predicate);
-
-    public static T Min<T>(this T[,] matrix) => matrix.Cast<T>().Min()!;
-    public static T Min<T>(this T[,] matrix, Func<T, bool> predicate) => 
-        matrix.Cast<T>().Where(item => predicate(item)).Min()!;
 }

@@ -76,7 +76,7 @@ public struct Matrix : ICloneable {
             matrix = Parse(str);
             valid = true;
         } catch (Exception ex) {
-            Console.WriteLine(ex);
+            Log.WriteLine(ex);
         }
 
         return valid;
