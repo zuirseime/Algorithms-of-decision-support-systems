@@ -80,7 +80,7 @@ public class SA {
         _tableau.InvertSigns(max);
         Designer.ShowInputTableau(_tableau);
 
-        if (_tableau.Rows.Any(h => h.Contains('0')))
+        if (_tableau.Rows.Any(h => h == "0"))
             _tableau = _zeroRows.Remove(_tableau);
 
         _tableau = _basicFeasibleSolution.Find(_tableau);

@@ -30,6 +30,8 @@ public class Solution : Module {
             result += "\n";
         }
 
+        Log.WriteLine("Assignment matrix:");
+        Log.WriteLine(result);
         return result;
     }
 
@@ -40,12 +42,12 @@ public class Solution : Module {
 
         string[,] extendedTable = new string[rows, cols];
 
-        extendedTable[0, 0] = "".PadLeft(Offset(matrix)) + ' ';
+        extendedTable[0, 0] = "".PadLeft(GetOffset()) + ' ';
 
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
                 var value = matrix[row, col];
-                extendedTable[row, col] = $"{Globals.Round(value)}".PadLeft(Offset(matrix)) + ' ';
+                extendedTable[row, col] = $"{Globals.Round(value)}".PadLeft(GetOffset()) + ' ';
             }
         }
 
@@ -62,5 +64,19 @@ public class Solution : Module {
         }
 
         return maxLength + 3;
+    }
+
+    private int GetOffset() {
+        int maxLength = int.MinValue;
+
+        for (int i = 0; i < _tableau.Height; i++) {
+            for (int j = 0; j < _tableau.Width; j++) {
+                var value = Globals.Round(_tableau[i, j]);
+                if ($"{value}".Length > maxLength)
+                    maxLength = $"{value}".Length;
+            }
+        }
+
+        return maxLength - 1;
     }
 }
