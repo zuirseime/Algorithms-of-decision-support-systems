@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lab9.SimplexAlgorithm", "La
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lab9.Common", "Lab9.Common\Lab9.Common.csproj", "{BD5EFB24-A443-4FC5-B82D-BB6E320790A5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lab9.App", "Lab9.App\Lab9.App.csproj", "{48C3D24C-FC81-44C6-9609-D9C4AABE5DAA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{BD5EFB24-A443-4FC5-B82D-BB6E320790A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD5EFB24-A443-4FC5-B82D-BB6E320790A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD5EFB24-A443-4FC5-B82D-BB6E320790A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48C3D24C-FC81-44C6-9609-D9C4AABE5DAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48C3D24C-FC81-44C6-9609-D9C4AABE5DAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48C3D24C-FC81-44C6-9609-D9C4AABE5DAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48C3D24C-FC81-44C6-9609-D9C4AABE5DAA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
