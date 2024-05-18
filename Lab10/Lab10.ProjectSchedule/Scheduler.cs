@@ -1,17 +1,41 @@
 ﻿namespace Lab10.ProjectSchedule;
 public class Scheduler {
     private List<ProjectTask> _tasks = [];
+    private string _way = string.Empty;
+    private int _days;
 
     public (string, int) Run(List<string> tasks) {
         FillTaskList(tasks);
 
+        CalculateEarlyDates();
+        CalculateLateDates();
+
+        Console.WriteLine($"""
+
+                            Calculated parameters of the grid schedule:
+
+                            {string.Join('\n', _tasks)}
+
+                            Critical way: {_way}
+                            """);
+
+        return (_way, _days);
+    }
+
+    private void CalculateEarlyDates() {
+        Console.WriteLine("Early dates:\n");
+        _tasks.ForEach(task => task.SetEarly());
+
+        Console.WriteLine($"\nProject duration: {_days = _tasks[^1].Early.Finish}\n");
+    }
+
+    private void CalculateLateDates() {
+        Console.WriteLine("Late dates:\n");
         _tasks.ForEach(task => task.Previous.ForEach(prev => prev.Next.Add(task)));
 
         _tasks.Reverse<ProjectTask>().ToList().ForEach(t => t.SetLate());
-        string way = string.Join('-', _tasks.Where(t => t.Critical).Select(i => i.Id));
-        int days = _tasks[^1].Early.Finish;
 
-        return (way, days);
+        _way = string.Join('-', _tasks.Where(t => t.Critical).Select(i => i.Id));
     }
 
     private void FillTaskList(List<string> tasks) {
@@ -31,8 +55,6 @@ public class Scheduler {
             }
 
             ProjectTask projectTask = new(previous, duration, workers);
-            projectTask.SetEarly();
-
             _tasks.Add(projectTask);
         }
     }
