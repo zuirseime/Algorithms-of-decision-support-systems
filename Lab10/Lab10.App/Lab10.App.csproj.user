@@ -7,7 +7,33 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="Pages\Home.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Pages\Schedule.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Pages\Workload.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="UpDown.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
     <Page Update="MainWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Pages\Home.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Pages\Schedule.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Pages\Workload.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UpDown.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
