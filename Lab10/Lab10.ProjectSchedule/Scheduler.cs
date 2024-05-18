@@ -11,11 +11,8 @@ public class Scheduler {
         CalculateLateDates();
 
         Console.WriteLine($"""
-
-                            Calculated parameters of the grid schedule:
-
-                            {string.Join('\n', _tasks)}
-
+                            {'\n'}Calculated parameters of the grid schedule:{'\n'}
+                            {string.Join('\n', _tasks)}{'\n'}
                             Critical way: {_way}
                             """);
 
