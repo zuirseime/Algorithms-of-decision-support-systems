@@ -1,0 +1,63 @@
+﻿<Page x:Class="Lab10.App.Pages.Home"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Lab10.App"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="Home">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1.5*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Home" FontSize="50" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Gray" Grid.RowSpan="2" Grid.ColumnSpan="2" />
+        
+        <Grid Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Number of tasks: " Margin="5" />
+            <local:UpDown Min="1" Max="20" x:Name="_taskCount" ValueChanged="TaskCountChanged" Grid.Column="1" />
+        </Grid>
+
+        <DataGrid ItemsSource="{Binding ElementName=UI, Path=Tasks, Mode=TwoWay}" x:Name="_table" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" Margin="5" IsSynchronizedWithCurrentItem="True" BeginningEdit="_table_BeginningEdit">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="#" Binding="{Binding Path=Id, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="Auto" IsReadOnly="True" />
+                <DataGridTextColumn Header="Previous tasks" Binding="{Binding Path=Previous, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="*" />
+                <DataGridTextColumn Header="Task duration" Binding="{Binding Path=Duration, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="*" />
+                <DataGridTextColumn Header="Workers" Binding="{Binding Path=Workers, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="*" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <Grid Grid.Row="1" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Margin="5">
+                <TextBlock Text="Critical way" />
+                <TextBox x:Name="_way" IsReadOnly="True" />
+            </StackPanel>
+
+            <StackPanel Margin="5" Grid.Row="1">
+                <TextBlock Text="Project duration" />
+                <TextBox x:Name="_duration" IsReadOnly="True" />
+            </StackPanel>
+
+            <Button Content="Find critical way and project duration" Margin="5" Padding="10 5" Grid.Row="2" Click="FindCriticalWay" />
+
+        </Grid>
+    </Grid>
+</Page>
