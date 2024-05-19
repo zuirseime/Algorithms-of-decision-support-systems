@@ -1,21 +1,23 @@
 namespace Lab10.ProjectSchedule;
 
-public class ProjectTask(List<ProjectTask> previous, int duration, int workers) {
-    public struct Segment(int start, int finish) {
+public class ProjectTask(int id, List<ProjectTask> previous, int duration, int workers) {
+    public struct Segment(int start, int finish) : IComparable {
         public int Start { get; set; } = start;
         public int Finish { get; set; } = finish;
+
+        public int CompareTo(object? obj) {
+            return Finish.CompareTo(((Segment)obj).Finish);
+        }
     }
 
-    private static int counter;
-
-    public int Id { get; set; } = ++counter;
+    public int Id { get; set; } = id;
     public List<ProjectTask> Previous { get; set; } = previous;
     public List<ProjectTask> Next { get; set; } = [];
     public Segment Early { get; set; }
     public Segment Late { get; set; }
     public int Duration { get; set; } = duration;
     public int Reserve { get; set; }
-    public bool Critical { get; set; } = false; 
+    public bool Critical { get; set; } = false;
     public int Workers { get; set; } = workers;
 
     public void SetEarly() {
@@ -31,8 +33,6 @@ public class ProjectTask(List<ProjectTask> previous, int duration, int workers) 
         Console.WriteLine(ToString(4, 7));
         Critical = Reserve == 0;
     }
-
-    public static void Invalidate(List<ProjectTask> tasks) => counter = tasks.Count;
 
     private string[] Data => [
         $"    Workers: {Workers}",
