@@ -26,7 +26,7 @@ public class Scheduler {
         Tasks.ForEach(task => task.Previous.ForEach(prev => prev.Next.Add(task)));
         var ends = Tasks.Where(task => task.Next.Count == 0).ToList();
         if (ends.Count > 1) {
-            ProjectTask.Segment segment = ends.Max(end => end.Early);
+            Segment segment = ends.Max(end => end.Early);
             segment.Start = segment.Finish;
             ProjectTask task = new(Tasks.Count, [], 0, 0) { Early = segment };
             Tasks.Add(task);

@@ -1,14 +1,7 @@
 namespace Lab10.ProjectSchedule;
 
 public class ProjectTask(int id, List<ProjectTask> previous, int duration, int workers) {
-    public struct Segment(int start, int finish) : IComparable {
-        public int Start { get; set; } = start;
-        public int Finish { get; set; } = finish;
-
-        public int CompareTo(object? obj) {
-            return Finish.CompareTo(((Segment)obj).Finish);
-        }
-    }
+    private Segment _early;
 
     public int Id { get; set; } = id;
     public List<ProjectTask> Previous { get; set; } = previous;
@@ -22,7 +15,7 @@ public class ProjectTask(int id, List<ProjectTask> previous, int duration, int w
 
     public void SetEarly() {
         int max = Previous.Count > 0 ? Previous.Max(i => i.Early.Finish) : 0;
-        Early = new Segment(max, max + Duration);
+        _early = Early = new Segment(max, max + Duration);
         Console.WriteLine(ToString(1, 4));
     }
     public void SetLate() {
@@ -34,6 +27,8 @@ public class ProjectTask(int id, List<ProjectTask> previous, int duration, int w
         Critical = Reserve == 0;
     }
 
+    public Segment GetBaseEarly() => _early;
+
     private string[] Data => [
         $"    Workers: {Workers}",
         $"    Duration: {Duration}",
@@ -44,11 +39,20 @@ public class ProjectTask(int id, List<ProjectTask> previous, int duration, int w
         $"    Time reserve: {Reserve}",
     ];
 
+    public bool Move(int value) {
+        Segment newEarly = new(Early.Start + value, Early.Finish + value);
+        if (newEarly.Start >= _early.Start && newEarly.Finish <= Late.Finish) {
+            Early = newEarly;
+            return true;
+        }
+        return false;
+    }
+
     public override string ToString() {
         return ToString(0, Data.Length);
     }
 
-    private string ToString(int start, int end) {
+    public string ToString(int start, int end) {
         string result = $"{(Critical ? "(C) " : "")}Task {Id}:\n";
         result += string.Join("\n", Data.Take(new Range(start, end)));
         return result;
