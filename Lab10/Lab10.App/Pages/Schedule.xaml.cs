@@ -21,7 +21,7 @@ public partial class Schedule : Page {
         List<Point> dataPoints = [];
         foreach (var task in _tasks) {
             LineSeries solidLines = new() {
-                Title = $"{(task.Critical ? "(C) " : " ")}Task {task.Id} (Early), {task.Workers} workers",
+                Title = $"Task {task.Id} (Early), {task.Workers} workers",
                 ItemsSource = new[] {
                     new KeyValuePair<int, int>(task.Early.Start, task.Id),
                     new KeyValuePair<int, int>(task.Early.Finish, task.Id),
@@ -31,8 +31,6 @@ public partial class Schedule : Page {
                 PolylineStyle = (Style)Resources["SolidLineStyle"],
             };
             _chart.Series.Add(solidLines);
-
-            if (task.Critical) continue;
 
             LineSeries dashedLines = new() {
                 Title = $"Task {task.Id} (Late), {task.Workers} workers",
