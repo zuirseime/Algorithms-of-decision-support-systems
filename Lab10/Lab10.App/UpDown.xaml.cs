@@ -41,8 +41,6 @@ public partial class UpDown : UserControl {
     public static readonly DependencyProperty StepProperty =
         DependencyProperty.Register("Step", typeof(double), typeof(UpDown), new PropertyMetadata(1d));
 
-    private double _backup;
-
     public UpDown() {
         InitializeComponent();
         this.text.Text = this.Value.ToString();

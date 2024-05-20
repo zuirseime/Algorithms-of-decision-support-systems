@@ -15,8 +15,7 @@
 
         <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
             <Button Tag="0" Content="Home" Click="ChangePage" Margin="5" Padding="10 5" />
-            <Button Tag="1" Content="Schedule" Click="ChangePage" Margin="5" Padding="10 5" />
-            <Button Tag="2" Content="Workload" Click="ChangePage" Margin="5" Padding="10 5" />
+            <Button Tag="1" Content="Graphs" Click="ChangePage" Margin="5" Padding="10 5" x:Name="_graphs" />
         </StackPanel>
 
         <Frame x:Name="_frame" Grid.Row="1" NavigationUIVisibility="Hidden" Margin="5" />

@@ -4,11 +4,39 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Lab10.App.Pages"
+      xmlns:chart="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=DotNetProjects.DataVisualization.Toolkit"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="Schedule">
 
+    <Page.Resources>
+        <Style x:Key="SolidLineStyle" TargetType="Polyline">
+            <Setter Property="Stroke" Value="LightSkyBlue"/>
+            <Setter Property="StrokeThickness" Value="2"/>
+        </Style>
+        <Style x:Key="DashedLineStyle" TargetType="Polyline">
+            <Setter Property="Stroke" Value="Black"/>
+            <Setter Property="StrokeThickness" Value="2"/>
+            <Setter Property="StrokeDashArray" Value="2,2"/>
+        </Style>
+        <Style x:Key="AxisLabelStyle" TargetType="chart:AxisLabel">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="chart:AxisLabel">
+                        <TextBlock Text="{Binding}" ToolTip="{Binding}" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+    
     <Grid>
         <TextBlock Text="Schedule" FontSize="50" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Gray" Grid.RowSpan="2" Grid.ColumnSpan="2" />
+        <chart:Chart x:Name="_chart">
+            <chart:Chart.Axes>
+                <chart:LinearAxis Interval="1" Orientation="X" ShowGridLines="True" />
+                <chart:LinearAxis Interval="1" Orientation="Y" ShowGridLines="True" />
+            </chart:Chart.Axes>
+        </chart:Chart>
     </Grid>
 </Page>

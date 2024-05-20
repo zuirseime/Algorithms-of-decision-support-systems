@@ -16,12 +16,15 @@ public partial class Home : Page {
 
     public ObservableCollection<TaskInterface> Tasks {
         get => _tasks;
-        private set => _tasks = value;
+        set => _tasks = value;
     }
 
     public Home() {
         InitializeComponent();
-        IncreaseRows();
+        ReadyChanged?.Invoke(this, new HomeEventArgs(false));
+
+        _taskCount.text.Text = Tasks.Count.ToString();
+        _table.ItemsSource = Tasks;
     }
 
     private void TaskCountChanged(object sender, TextChangedEventArgs e) {
@@ -35,6 +38,7 @@ public partial class Home : Page {
         }
 
         _table.ItemsSource = _tasks;
+        ReadyChanged?.Invoke(this, new HomeEventArgs(false));
     }
 
     private void IncreaseRows() => _tasks.Add(new TaskInterface());
@@ -42,11 +46,20 @@ public partial class Home : Page {
 
     private void FindCriticalWay(object sender, System.Windows.RoutedEventArgs e) {
         string[][] tasks = _tasks.Select(t => t.GetArray()).ToArray();
+
+        if (tasks.Any(task => task.Any(item => string.IsNullOrEmpty(item)))) return;
+
         (_way.Text, _duration.Text) = _scheduler.Run(tasks);
+        ReadyChanged?.Invoke(this, new HomeEventArgs(true));
     }
 
     private void _table_BeginningEdit(object sender, DataGridBeginningEditEventArgs e) {
         var row = e.Row.Item as TaskInterface;
-        if (row != null) row.BeginEdit();
+        row?.BeginEdit();
+    }
+
+    public event EventHandler<HomeEventArgs> ReadyChanged;
+    public class HomeEventArgs(bool isReady) {
+        public bool IsReady { get; set; } = isReady;
     }
 }
