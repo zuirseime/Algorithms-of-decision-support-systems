@@ -42,9 +42,8 @@ public class Scheduler {
         _way = string.Join('-', Tasks.Where(t => t.Critical).Select(i => i.Id));
     }
 
-    int zeroCount;
     private void FillTaskList(string[][] tasks) {
-        zeroCount = tasks.Where(t => t.Contains("0")).Count();
+        int zeroCount = tasks.Where(t => t.Contains("0")).Count();
         if (zeroCount > 1)
             Tasks.Insert(0, new ProjectTask(0, [], 0, 0) { Id = 0 });
 
@@ -75,11 +74,4 @@ public class Scheduler {
 
     private static IEnumerable<(string[] task, string[] args)> GetEnumerable(string[][] tasks)
         => from task in tasks let args = task.Select(p => p.Trim()).ToArray() select (task, args);
-
-    private void ConnectPrevious(int[] previous, ProjectTask projectTask) {
-        foreach (var prev in from item in previous let prev = Tasks[item - 1] select prev) {
-            prev.Next.Add(projectTask);
-            projectTask.Previous.Add(prev);
-        }
-    }
 }
